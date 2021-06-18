@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<data>
+    <event color="#c896fa" end="100" mapping="Core0" start="0" title="mp4Read_0 (x1)">Step_mp4Read_0_(x1).</event>
+    <event color="#c896fa" end="200" mapping="Core0" start="100" title="split_0 (x1)">Step_split_0_(x1).</event>
+    <event color="#ffa54f" end="922" mapping="Core0" start="200" title="explode_split_0_output (x1)">Step_explode_split_0_output_(x1).</event>
+    <event color="#c896fa" end="1022" mapping="Core0" start="922" title="medianFilter_0 (x1)">Step_medianFilter_0_(x1).</event>
+    <event color="#c896fa" end="1122" mapping="Core0" start="1022" title="medianFilter_1 (x1)">Step_medianFilter_1_(x1).</event>
+    <event color="#c896fa" end="1222" mapping="Core0" start="1122" title="medianFilter_2 (x1)">Step_medianFilter_2_(x1).</event>
+    <event color="#c896fa" end="1322" mapping="Core0" start="1222" title="medianFilter_3 (x1)">Step_medianFilter_3_(x1).</event>
+    <event color="#c896fa" end="1422" mapping="Core0" start="1322" title="medianFilter_4 (x1)">Step_medianFilter_4_(x1).</event>
+    <event color="#c896fa" end="1522" mapping="Core0" start="1422" title="medianFilter_5 (x1)">Step_medianFilter_5_(x1).</event>
+    <event color="#c896fa" end="1622" mapping="Core0" start="1522" title="medianFilter_6 (x1)">Step_medianFilter_6_(x1).</event>
+    <event color="#c896fa" end="1722" mapping="Core0" start="1622" title="medianFilter_7 (x1)">Step_medianFilter_7_(x1).</event>
+    <event color="#c896fa" end="1822" mapping="Core0" start="1722" title="cvtColor_0 (x1)">Step_cvtColor_0_(x1).</event>
+    <event color="#c896fa" end="1922" mapping="Core0" start="1822" title="cvtColor_1 (x1)">Step_cvtColor_1_(x1).</event>
+    <event color="#c896fa" end="2022" mapping="Core0" start="1922" title="cvtColor_2 (x1)">Step_cvtColor_2_(x1).</event>
+    <event color="#c896fa" end="2122" mapping="Core0" start="2022" title="cvtColor_3 (x1)">Step_cvtColor_3_(x1).</event>
+    <event color="#c896fa" end="2222" mapping="Core0" start="2122" title="cvtColor_4 (x1)">Step_cvtColor_4_(x1).</event>
+    <event color="#c896fa" end="2322" mapping="Core0" start="2222" title="cvtColor_5 (x1)">Step_cvtColor_5_(x1).</event>
+    <event color="#c896fa" end="2422" mapping="Core0" start="2322" title="cvtColor_6 (x1)">Step_cvtColor_6_(x1).</event>
+    <event color="#c896fa" end="2522" mapping="Core0" start="2422" title="cvtColor_7 (x1)">Step_cvtColor_7_(x1).</event>
+    <event color="#cd853f" end="3244" mapping="Core0" start="2522" title="implode_merge_0_input (x1)">Step_implode_merge_0_input_(x1).</event>
+    <event color="#c896fa" end="3344" mapping="Core0" start="3244" title="merge_0 (x1)">Step_merge_0_(x1).</event>
+    <event color="#c896fa" end="3444" mapping="Core0" start="3344" title="mask_0 (x1)">Step_mask_0_(x1).</event>
+    <event color="#c896fa" end="3544" mapping="Core0" start="3444" title="boxConstruction_0 (x1)">Step_boxConstruction_0_(x1).</event>
+    <event color="#c896fa" end="3644" mapping="Core0" start="3544" title="resize_0 (x1)">Step_resize_0_(x1).</event>
+    <event color="#c896fa" end="3744" mapping="Core0" start="3644" title="mp4display_0 (x1)">Step_mp4display_0_(x1).</event>
+    <perfs impl_length="3744" impl_nbCores="1" impl_nbUsedCores="1" span="2344" work="3744">
+        <core id="Core0" load="3744" used_mem="6524944">Core_Core0.</core>
+    </perfs>
+</data>
