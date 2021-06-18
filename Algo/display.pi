@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+    <key attr.name="parameters" for="graph" id="parameters"/>
+    <key attr.name="variables" for="graph" id="variables"/>
+    <key attr.name="arguments" for="node" id="arguments"/>
+    <key attr.name="name" attr.type="string" for="graph"/>
+    <key attr.name="graph_desc" attr.type="string" for="node"/>
+    <graph edgedefault="directed">
+        <data key="name">display</data>
+        <node expr="360" id="height" kind="param"/>
+        <node expr="640" id="width" kind="param"/>
+        <node id="cvtColor" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="cvtColorHSV">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="output" name="dest"/>
+        </node>
+        <node id="medianFilter" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="medianFilter">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE" expr="height*width*3"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="output" name="dest"/>
+        </node>
+        <node id="mp4Read" kind="actor">
+            <data key="graph_desc">Code/include/mp4Read.h</data>
+            <loop name="mp4Read">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="OUT" isConfig="false"
+                    name="pixels" type="unsigned char "/>
+            </loop>
+            <init name="initMp4Read"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="output" name="pixels"/>
+        </node>
+        <node id="mp4Display" kind="actor">
+            <data key="graph_desc">Code/include/mp4Read.h</data>
+            <loop name="mp4Display">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false"
+                    name="pixels" type="unsigned char "/>
+            </loop>
+            <init name="initMp4Display">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </init>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="input" name="pixels"/>
+        </node>
+        <edge kind="fifo" source="medianFilter" sourceport="dest"
+            target="cvtColor" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="mp4Read" sourceport="pixels"
+            target="medianFilter" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="cvtColor" sourceport="dest"
+            target="mp4Display" targetport="pixels" type="unsigned char"/>
+        <edge kind="dependency" source="width" target="mp4Read" targetport="width"/>
+        <edge kind="dependency" source="height" target="mp4Read" targetport="height"/>
+        <edge kind="dependency" source="width"
+            target="mp4Display" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="mp4Display" targetport="height"/>
+        <edge kind="dependency" source="width"
+            target="medianFilter" targetport="width"/>
+        <edge kind="dependency" source="width" target="cvtColor" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="medianFilter" targetport="height"/>
+        <edge kind="dependency" source="height" target="cvtColor" targetport="height"/>
+    </graph>
+</graphml>

@@ -1,0 +1,16 @@
+digraph g {
+rankdir=LR;
+n11 [shape=cds,style="dashed",label="'640'"];
+n12 [shape=cds,style="dashed",label="'360'"];
+n13 [shape=record,style=rounded,label="<id>ReadMP4|{{<e0>width|<e1>height}|{<s0>pixels[3*height*width]}}"];
+n14 [shape=record,style=rounded,label="<id>SwimmerDetection|{{<e0>width|<e1>height|<e2>src[3*height*width]}|{<s0>dest[3*height*width]}}"];
+n15 [shape=record,style=rounded,label="<id>DisplayMP4|{{<e0>width|<e1>height|<e2>pixels[3*height*width]}|{}}"];
+n11:s0 -> n15:e0 [label="int param"; style=dashed];
+n12:s0 -> n15:e1 [label="int param"; style=dashed];
+n14:s0 -> n15:e2 [label="uchar"; style=plain];
+n11:s0 -> n14:e0 [label="int param"; style=dashed];
+n12:s0 -> n14:e1 [label="int param"; style=dashed];
+n13:s0 -> n14:e2 [label="uchar"; style=plain];
+n11:s0 -> n13:e0 [label="int param"; style=dashed];
+n12:s0 -> n13:e1 [label="int param"; style=dashed];
+}

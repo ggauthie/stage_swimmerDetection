@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario>
+    <files>
+        <algorithm url="/SwimmerDetection/Algo/split.pi"/>
+        <architecture url="/SwimmerDetection/Archi/1CoreX86.slam"/>
+        <codegenDirectory url="/SwimmerDetection/Code/generated/"/>
+    </files>
+    <constraints excelUrl="">
+        <constraintGroup>
+            <operator name="Core0"/>
+            <task name="split/mp4Read"/>
+            <task name="split/medianFilter"/>
+            <task name="split/split"/>
+            <task name="split/merge"/>
+            <task name="split/cvtColor"/>
+            <task name="split/mask"/>
+            <task name="split/boxConstruction"/>
+            <task name="split/resize"/>
+            <task name="split/mp4display"/>
+            <task name="split"/>
+        </constraintGroup>
+    </constraints>
+    <timings excelUrl="">
+        <memcpyspeed opname="x86" setuptime="1" timeperunit="0.001"/>
+    </timings>
+    <simuParams>
+        <mainCore>Core0</mainCore>
+        <mainComNode>shared_mem</mainComNode>
+        <averageDataSize>1000</averageDataSize>
+        <dataTypes>
+            <dataType name="uchar" size="1"/>
+            <dataType name="unsigned char" size="1"/>
+            <dataType name="int" size="4"/>
+        </dataTypes>
+        <specialVertexOperators>
+            <specialVertexOperator path="Core0"/>
+        </specialVertexOperators>
+    </simuParams>
+    <parameterValues/>
+    <papifyConfigs xmlUrl=""/>
+    <energyConfigs xmlUrl="">
+        <performanceObjective objectiveEPS="0.0"/>
+        <peActorsEnergy/>
+    </energyConfigs>
+</scenario>
