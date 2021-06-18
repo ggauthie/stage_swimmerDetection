@@ -6,6 +6,7 @@ Program used to detect a swimmer in a video.
 - SDL2
 - PThreads
 - OpenCV
+- ffmpeg
 
 ## Compilation
 
