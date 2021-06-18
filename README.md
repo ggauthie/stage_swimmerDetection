@@ -10,7 +10,7 @@ Program used to detect a swimmer in a video.
 ## Compilation
 
 `` mkdir build && cd build``
-`` mcmake ..``
+`` cmake ..``
 `` make``
 
 ## Execution
