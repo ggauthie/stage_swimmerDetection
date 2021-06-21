@@ -1,0 +1,50 @@
+SRCS=swimmerAlgorithm.hcl
+GEN_OPTS=-dump_typed
+DOT_OPTS=-target_dir ./dot -dot_slotted_boxes
+SYSTEMC_OPTS=-target_dir ./systemc -sc_stop_time 100
+PREESM_OPTS=-target_dir ./preesm
+PREESM_REP=/home/ggauthie/dev/workspace_preesm
+PREESM_PROJ=simple
+
+HOCL=/usr/local/hocl
+HOCLC=$(HOCL)/bin/hoclc
+DOTVIEWER=dot
+VCDVIEWER=gtkwave
+TXTVIEWER=nano
+
+all: dot.show
+
+dot: $(SRCS)
+	$(HOCLC) $(HOCL_OPTS) $(GEN_OPTS) -dot $(DOT_OPTS) $(SRCS)
+
+dot.show: dot
+	@for f in ./dot/*.dot; do $(DOTVIEWER) $$f; done
+
+.PHONY: dot preesm systemc preesm.proj
+
+preesm: $(SRCS)
+	$(HOCLC) $(HOCL_OPTS) $(GEN_OPTS) -preesm $(PREESM_OPTS) $(SRCS)
+
+preesm.proj: 
+	if [ ! -d $(PREESM_PROJ) ]; then mkdir $(PREESM_PROJ); fi
+	if [ ! -d $(PREESM_PROJ)/Algo ]; then mkdir $(PREESM_PROJ)/Algo; fi
+	if [ ! -d $(PREESM_PROJ)/include ]; then mkdir $(PREESM_PROJ)/include; fi
+	if [ ! -d $(PREESM_PROJ)/src ]; then mkdir $(PREESM_PROJ)/src; fi
+	if [ ! -e $(PREESM_PROJ)/.project ]; then sed -e 's/%%NAME%%/$(PROJ)/' $(HOCL)/lib/preesm/.project.templ > $(PREESM_PROJ)/.project; fi
+	if [ -d ./include ]; then cp include/*.h $(PREESM_PROJ)/include; fi
+	if [ -d ./src ]; then cp src/*.c $(PREESM_PROJ)/src; fi
+	cp preesm/*.pi $(PREESM_PROJ)/Algo
+
+systemc: $(SRCS)
+	$(HOCLC) $(HOCL_OPTS) $(GEN_OPTS) -systemc $(SYSTEMC_OPTS) $(SRCS)
+
+xdf: $(SRCS)
+	$(HOCLC) $(HOCL_OPTS) $(GEN_OPTS) -xdf $(XDF_OPTS) $(SRCS)
+
+clean:
+	@\rm -f *.dot
+	@\rm -f *.xdf
+	@\rm -f *.output
+
+clobber: clean
+	@\rm -f *~
