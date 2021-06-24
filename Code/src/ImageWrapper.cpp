@@ -35,9 +35,9 @@ void swimmerAlgo(unsigned char *src, unsigned char* dest, int width, int height,
     Image_instance->swimmerAlgo(src,dest,width,height, x_rect, y_rect, width_rect, height_rect);
 }*/
 
-void swimmerAlgoDynamic(unsigned char *pixels, unsigned char* mask, unsigned char* dest, int width, int height, int *x_rect, int *y_rect, int *width_rect, int *height_rect)
+void swimmerAlgoDynamic(unsigned char *src, unsigned char *dest, int width, int height)
 {
-    swimmerAlgoDynamic_cpp(pixels, mask, dest,width,height, x_rect, y_rect, width_rect, height_rect);
+	swimmerAlgoDynamic_cpp(src, dest,width, height);
 }
 
 void medianFilter(unsigned char *src, unsigned char *dest, int width, int height, int nb_channels)
@@ -80,8 +80,10 @@ void saliencyFineGrained(unsigned char* src, unsigned char* dest, int width, int
     saliencyFineGrained_cpp(src,dest,width,height);
 }
 
-void surfaceDetection(unsigned char* maskDest, int width, int height, int nb_frames, int adjust_pt1, int adjust_pt2) {
-    surfaceDetection_cpp( maskDest, width, height, nb_frames, adjust_pt1, adjust_pt2);
+void surfaceDetection(unsigned char* src, unsigned char* dest,int width, int height) {
+	unsigned char norm[height*width];
+	normRGB(src, norm,width, height);
+	surfaceDetection_cpp(norm, src, dest, width,height);
 }
 
 void normRGB(unsigned char* src, unsigned char *dest, int width, int height)

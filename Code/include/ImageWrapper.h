@@ -59,7 +59,7 @@ void swimmerAlgo(unsigned char *src, unsigned char* dest, int width, int height)
 *       the array of size 3*width*height with all the values of pixels of the image with the bounding box
 *
 */
-void swimmerAlgoDynamic(unsigned char *pixels, unsigned char* mask, unsigned char* dest, int width, int height, int *x_rect, int *y_rect, int *width_rect, int *height_rect);
+void swimmerAlgoDynamic(unsigned char *src,unsigned char *dest, int width, int height);
 
 /**
 * Median Blur Filter
@@ -238,7 +238,7 @@ void cvtToWB(unsigned char* src, unsigned char* dest, int width, int height);
 
 void saliencyFineGrained(unsigned char* src, unsigned char* dest, int width, int height);
 void saliencySpectralRes(unsigned char* src, unsigned char* dest, int width, int height);
-void surfaceDetection( unsigned char* maskDest, int width, int height, int nb_frames,  int adjust_pt1, int adjust_pt2);
+void surfaceDetection(unsigned char* src, unsigned char* dest, int width, int height);
 
 /**
 * Function which computes the norm between the 3 components RGB

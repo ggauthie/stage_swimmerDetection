@@ -245,7 +245,8 @@ void saliencySpectralRes_cpp(unsigned char* src, unsigned char* dest, int width,
 *        integer used to adjust the hieght of the right point of the line
 *
 */
-void surfaceDetection_cpp(unsigned char* maskDest, int width, int height, int nb_frames, int adjust_pt1, int adjust_pt2);
+void surfaceDetection_cpp(unsigned char* src, unsigned char *image, unsigned char *dest, int width, int height);
+void maskSurface_cpp(unsigned char* src, unsigned char * image, unsigned char *dest, int width, int height);
 
 /**
 * Function used to detect the swimmer in a frame using median blur filter, threshold and color filter on HSV components
@@ -260,7 +261,7 @@ void surfaceDetection_cpp(unsigned char* maskDest, int width, int height, int nb
 *       the array of size 3*width*height with all the values of pixels of the image with the bounding box
 *
 */
-void swimmerAlgoDynamic_cpp(unsigned char *pixels,  unsigned char* mask, unsigned char* dest, int width, int height, int *x_rect, int *y_rect, int *width_rect, int *height_rect);
+void swimmerAlgoDynamic_cpp(unsigned char *src, unsigned char *dest, int width, int height);
 
 /**
 * Function which returns the IOU : the area of intersection of 2 rect divided by hte area of the union of 2 rects

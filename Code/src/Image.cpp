@@ -18,8 +18,9 @@ using namespace xt;
 static int ind = 0;
 
 int const scalar1 = 179,scalar2 = 210,scalar3 = 110;
+
+static unsigned char maskSurface[360*640];
 unsigned char imgs[100*360*640*3];
-xt::xarray<unsigned char> images =  xt::empty<unsigned char>({NB_FRAMES,360,640,3});
 
 void cannyMethod_cpp(unsigned char *y, unsigned char* dest, int width, int height)
 {
@@ -202,14 +203,14 @@ void boxConstruction_cpp(unsigned char* src, int width, int height, int *x_rect,
     *height_rect=rect_in.height;
 }
 
-void swimmerAlgoDynamic_cpp(unsigned char pixels[], unsigned char* mask, unsigned char *dest, int width, int height, int *x_rect,
-                               int *y_rect, int *width_rect, int *height_rect)
+void swimmerAlgoDynamic_cpp(unsigned char *src, unsigned char *dest, int width, int height)
 {
-    Mat img_blur, img_src, img_hsv, maskSurface, maskHSV, img_segmented, maskFinal, maskHSV_closed;
+    Mat img_blur, img_src, img_hsv, matMaskSurface, maskHSV, img_segmented, maskFinal, maskHSV_closed;
     //cout << "Size of pixels = "<<sizeof(pixels) << endl;
-    img_src = Mat(height, width, CV_8UC3, pixels);
-    vector<Rect> tab_rect = readJson_cpp("../data/train.json");
-    Rect temp;
+    img_src = Mat(height, width, CV_8UC3, src);
+    //Read the json file to display hte labeled box
+    /*vector<Rect> tab_rect = readJson_cpp("../data/train.json");
+    Rect temp;*/
 
     //Median Filter wit kernel size 9
     medianBlur(img_src,img_blur, 9);
@@ -218,13 +219,17 @@ void swimmerAlgoDynamic_cpp(unsigned char pixels[], unsigned char* mask, unsigne
     cvtColor(img_src, img_hsv, COLOR_RGB2HSV);
 
     //Mask Creation
-    maskSurface = Mat(height,width,CV_8UC1,mask);
+    matMaskSurface = Mat(height,width,CV_8UC1,maskSurface);
     //Closing kernSize = 14
+    /*imshow("MASK", matMaskSurface);
+    waitKey(0);*/
 
     inRange(img_hsv, Scalar(0,0,0), Scalar(scalar1, scalar2, scalar3), maskHSV);
-    //morphologyEx( maskHSV, maskHSV_closed, MORPH_CLOSE, getStructuringElement( 0, Size( 3, 3 ), Point( 1, 1) ));
-    bitwise_and(maskHSV,maskHSV ,maskFinal ,maskSurface);
 
+    bitwise_and(maskHSV,maskHSV ,maskFinal ,matMaskSurface);
+
+    morphologyEx( maskFinal, maskFinal, MORPH_OPEN, getStructuringElement( 0, Size( 3, 3 ), Point( 1, 1) ));
+    morphologyEx( maskFinal, maskFinal, MORPH_CLOSE, getStructuringElement( 0, Size( 5, 5 ), Point( 2, 2) ));
     //Image segmentation
     bitwise_and(img_src,img_src,img_segmented ,maskFinal);
 
@@ -232,16 +237,44 @@ void swimmerAlgoDynamic_cpp(unsigned char pixels[], unsigned char* mask, unsigne
     vector<vector<cv::Point>> contours;
     findContours(maskFinal, contours, RETR_LIST, CHAIN_APPROX_SIMPLE);
     Rect rect_in = Rect(0,0,0,0);
-    for( auto i = 0; i < contours.size(); i++ )
+
+	vector<Rect> rects;
+
+    for (auto & cnt : contours)
     {
-        auto rect = boundingRect( contours[i] );
-        if(contourArea(contours[i]) > 500 && rect.height > 5 && contourArea(contours[i])<150000)
+        auto rect1 = boundingRect(cnt);
+        if(contourArea(cnt) > 400)
         {
-            rect_in = Rect(rect);
+        	bool find = false;
+        	for(auto & rect: rects)
+        	{
+        		Rect tempInter = Rect(rect.x -20 , rect.y, rect.width + 40 , rect.height) & Rect(rect1.x -20 , rect1.y, rect1.width+40, rect1.height);
+        		if(tempInter.width!=0 && tempInter.height!=0)
+        		{
+        			Rect rectUnion = rect | rect1;
+        			rect = rectUnion;
+        			find = true;
+        		}
+        	}
+            rectangle(img_src, rect1, Scalar(0,255,0),2);
+            if(!find)
+            	rects.push_back(rect1);
+        }
+        Rect bestRect;
+        if (rects.size() !=0)
+        {
+        	Rect tempMin(0,0,width,height);
+        	for(auto & rect : rects)
+        	{
+        		tempMin = rect.y < tempMin.y ? rect: tempMin;
+        	}
+        	bestRect = tempMin;
         }
 
     }
-    temp = tab_rect[ind++];
+
+
+    /*temp = tab_rect[ind++];
     //rectangle(img_src, rect_in, Scalar(0,255,0),2);
     if(rect_in.area()>0)
     {
@@ -250,18 +283,20 @@ void swimmerAlgoDynamic_cpp(unsigned char pixels[], unsigned char* mask, unsigne
     else
     {
         cout << "IOU :" << 0 << endl;
-    }
-    rectangle(img_src, rect_in, Scalar(0,255,0),2);
+    }*/
+    //rectangle(img_src, rect_in, Scalar(0,255,0),2);
     //rectangle(img_src, temp, Scalar(0,0,255), 2);
 
-    for(int i=0; i<width*height*3;i++)
+    memcpy(dest, img_src.data, 3*height*width);
+
+    /*for(int i=0; i<width*height*3;i++)
     {
         dest[i] = img_segmented.data[i];
     }
     *x_rect=rect_in.x;
     *y_rect=rect_in.y;
     *width_rect=rect_in.width;
-    *height_rect=rect_in.height;
+    *height_rect=rect_in.height;*/
 
 }
 
@@ -415,134 +450,171 @@ void closing_cpp(unsigned char *src, unsigned char *dest, int width, int height,
     memcpy(dest, mat_dest.data, height*width);
 }
 
-void surfaceDetection_cpp(unsigned char* maskDest, int width, int height, int nb_frames, int adjust_pt1, int adjust_pt2)
+void surfaceDetection_cpp(unsigned char* src, unsigned char *image, unsigned char *dest, int width, int height)
 {
-    Mat normBlur, dest;
-    xt::xarray<unsigned char> var = xt::variance(images, {0});
-    //cv::Mat mat(var.shape()[0], var.shape()[1], CV_8UC3, var.data());
-    auto norm = normRGB(var, width, height);
-
-    Mat norm_img (norm.shape()[0], norm.shape()[1], CV_8UC1, norm.data());
-
-    medianBlur(norm_img, normBlur, 9);
-
+    Mat normBlur;
+    Mat img(height, width, CV_8UC3, image);
+    Mat norm(height, width, CV_8UC1, src);
+    medianBlur(norm, normBlur, 9);
     cv::threshold(normBlur, normBlur, 90, 255,THRESH_BINARY);
-    //medianBlur(normBlur, normBlur, 25);
-    //Closing kernSize = 14
-    morphologyEx( normBlur, normBlur, MORPH_CLOSE, getStructuringElement( 0, Size( 2*14 + 1, 2*14+1 ), Point( 14, 14) ));
-    //Opening kernSize = 21
-    morphologyEx( normBlur, dest, MORPH_OPEN, getStructuringElement( 0, Size( 2*25 + 1, 2*25+1 ), Point( 25, 25) ));
-    imshow("Mask", dest);
-    waitKey(0);
-    for(int y =0; y< height; y++)
-    {
-        for (int x = 0; x < width; x++)
-        {
-            if(!dest.data[x + y*width])
-            {
-                maskDest[x + y*width] = 1;
-            }
-            else
-            {
-                maskDest[x + y*width] = 0;
-            }
-
-        }
-    }
-    /*namedWindow("Linear Blend", WINDOW_AUTOSIZE); // Create Window
-
-    createTrackbar("Operator:\n 0: Opening - 1: Closing  \n 2: Gradient - 3: Top Hat \n 4: Black Hat", "Linear Blend", &morph_operator, max_operator, on_trackbar);
-    createTrackbar( "Element:\n 0: Rect - 1: Cross - 2: Ellipse", "Linear Blend",
-                    &morph_elem, max_elem,
-                    on_trackbar );
-    createTrackbar( "Kernel size:\n 2n +1", "Linear Blend",
-                    &morph_size, max_kernel_size,
-                    on_trackbar );
-    on_trackbar(0,0);
-    //imshow("After opening", normBlur);
 
     Mat dataUp, dataBot;
-    Point pt_left, pt_right, pt3_up, pt3_bot, pt4_bot, pt4_up;
-    vector<Point> best_line{ pt_left, pt_right };
-    double min_het = 100000000;
-    for (int y = 100; y <= 320; y=y+2)
-    {
-        for(int degrees = -30 ; degrees <= 30; degrees = degrees+2)
-        {
-            pt_left = Point(0, y);
-            pt_right = Point(width, (int)(y - tan(degrees*3.14/360)*height));
+    	Point pt_left, pt_right, pt3_up, pt3_bot, pt4_bot, pt4_up;
+    	vector<Point> best_line{ pt_left, pt_right};
+    	double min_het = 100000000;
+    	for (int y = 100; y <= 320; y=y+2)
+    	{
+    	    for(int degrees = -30 ; degrees <= 30; degrees = degrees+2)
+    	    {
+    	        pt_left = Point(0, y);
+    	        pt_right = Point(width, (int)(y - tan(degrees*3.14/360)*height));
 
-            // Copy of the variance map for the two areas
-            dataUp = normBlur.clone();
-            dataBot = normBlur.clone();
+    	        // Copy of the variance map for the two areas
+    	        dataUp = normBlur.clone();
+    	        dataBot = normBlur.clone();
 
-            // Construction of other points
-            pt3_up = Point(width, 0);
-            pt4_up = Point(0, 0);
-            pt3_bot = Point(width, height);
-            pt4_bot = Point(0, height);
-            //
-            //Area construction
-            vector<Point> contourPolyUp{pt_left, pt_right, pt3_up, pt4_up};
-            vector<Point> contourPolyBot{pt_left, pt_right, pt3_bot, pt4_bot};
-            // Metric computation
-            // Upper area
-            double area_up = contourArea(contourPolyUp);
-            fillPoly(dataUp, contourPolyBot, 0);
-            int nb_white_pixel = sum( dataUp )[0];
+    	        // Construction of other points
+    	        pt3_up = Point(width, 0);
+    	        pt4_up = Point(0, 0);
+    	        pt3_bot = Point(width, height);
+    	        pt4_bot = Point(0, height);
+    	        //
+    	        //Area construction
+    	        vector<Point> contourPolyUp{pt_left, pt_right, pt3_up, pt4_up};
+    	        vector<Point> contourPolyBot{pt_left, pt_right, pt3_bot, pt4_bot};
+    	        // Metric computation
+    	        // Upper area
+    	        double area_up = contourArea(contourPolyUp);
+    	        fillPoly(dataUp, contourPolyBot, 0);
+    	        int nb_white_pixel = cv::sum(dataUp)[0];
 
-            double per_up = (double)nb_white_pixel / area_up;
+    	        double per_up = (double)nb_white_pixel / area_up;
 
-            // Bottom area
-            double area_bot = contourArea(contourPolyBot);
-            fillPoly(dataBot, contourPolyUp, 0);
-            nb_white_pixel = sum(dataUp)[0];
+    	        // Bottom area
+    	        double area_bot = contourArea(contourPolyBot);
+    	        fillPoly(dataBot, contourPolyUp, 0);
+    	        nb_white_pixel = cv::sum(dataBot)[0];
 
-            double per_bot = nb_white_pixel / area_bot;
+    	        double per_bot = nb_white_pixel / area_bot;
 
-            //Gini concentration
-            double het = 2 * per_up * (1 - per_up) * area_up + 2 * per_bot * (1 - per_bot) * area_bot;
-            if (het < min_het)
-            {
-                best_line[0] = pt_left;
-                best_line[1] = pt_right;
-                min_het = het;
-            }
-        }
-    }
-    // Gaussian Blur
-    //GaussianBlur(gray,(kernel_size, kernel_size),0)
-// Retrieval of the best line
-    pt_left = best_line[0];
-    pt_right = best_line[1];
-// Height adjustment of the line
-    pt_left = Point((int)pt_left.x, (int)(pt_left.y - adjust_pt1));
-    pt_right = Point((int)pt_right.x, (int)(pt_right.y + adjust_pt2));
-// Line construction y = a*x + b
-    double a = ((double)pt_right.y - (double)pt_left.y) / ((double)pt_right.x - (double)pt_left.x);
-    double b = (double)pt_left.y - a * (double)pt_left.x;
+    	        //Gini concentration
+    	        double het = 2 * per_up * (1 - per_up) * area_up + 2 * per_bot * (1 - per_bot) * area_bot;
+    	        if (het < min_het)
+    	        {
+    	            best_line[0] = pt_left;
+    	            best_line[1] = pt_right;
+    	            min_het = het;
+    	        }
+    	    }
+    	}
 
-    line(mat, pt_left, pt_right, Scalar(0, 0, 255), 3);
-    imshow("Surface detection" , mat);
-    waitKey(0);
+    	// Retrieval of the best line
+    	pt_left = best_line[0];
+    	pt_right = best_line[1];
+    	// Height adjustment of the line
+    	    //pt_left = Point((int)pt_left.x, (int)(pt_left.y - adjust_pt1));
+    	    //pt_right = Point((int)pt_right.x, (int)(pt_right.y + adjust_pt2));
+    	// Line construction y = a*x + b
+    	double a = ((double)pt_right.y - (double)pt_left.y) / ((double)pt_right.x - (double)pt_left.x);
+    	double b = (double)pt_left.y - a * (double)pt_left.x;
 
-    //Mask construction
-    for(int y =0; y< height; y++)
-    {
-        for(int x =0;x<width;x++)
-        {;
-            if((a*x+b)<y)
-            {
-                maskDest[x+y*width] = 1;
-            }
-            else
-            {
-                maskDest[x+y*width] = 0;
-            }
-        }
-    }*/
+    	line(img, pt_left, pt_right, Scalar(0, 0, 255), 3);
+
+    	//Mask construction
+    	for(int y =0; y< height; y++)
+    	{
+    	    for(int x =0;x<width;x++)
+    	    {
+    	        maskSurface[x+y*width] = (a*x+b)<y ? 1 : 0;
+    	    }
+    	}
+    	memcpy(dest, img.data, 3* height*width);
 }
 
+void maskSurface_cpp(unsigned char* src, unsigned char * image, unsigned char *dest, int width, int height)
+{
+	Mat dataUp, dataBot, normBlur;
+	normBlur = Mat(height,width, CV_8UC1, src);
+	Point pt_left, pt_right, pt3_up, pt3_bot, pt4_bot, pt4_up;
+	vector<Point> best_line{ pt_left, pt_right};
+	double min_het = 100000000;
+	for (int y = 100; y <= 320; y=y+2)
+	{
+	    for(int degrees = -30 ; degrees <= 30; degrees = degrees+2)
+	    {
+	        pt_left = Point(0, y);
+	        pt_right = Point(width, (int)(y - tan(degrees*3.14/360)*height));
+
+	        // Copy of the variance map for the two areas
+	        dataUp = normBlur.clone();
+	        dataBot = normBlur.clone();
+
+	        // Construction of other points
+	        pt3_up = Point(width, 0);
+	        pt4_up = Point(0, 0);
+	        pt3_bot = Point(width, height);
+	        pt4_bot = Point(0, height);
+	        //
+	        //Area construction
+	        vector<Point> contourPolyUp{pt_left, pt_right, pt3_up, pt4_up};
+	        vector<Point> contourPolyBot{pt_left, pt_right, pt3_bot, pt4_bot};
+	        // Metric computation
+	        // Upper area
+	        double area_up = contourArea(contourPolyUp);
+	        fillPoly(dataUp, contourPolyBot, 0);
+	        int nb_white_pixel = cv::sum(dataUp)[0];
+
+	        double per_up = (double)nb_white_pixel / area_up;
+
+	        // Bottom area
+	        double area_bot = contourArea(contourPolyBot);
+	        fillPoly(dataBot, contourPolyUp, 0);
+	        nb_white_pixel = cv::sum(dataBot)[0];
+
+	        double per_bot = nb_white_pixel / area_bot;
+
+	        //Gini concentration
+	        double het = 2 * per_up * (1 - per_up) * area_up + 2 * per_bot * (1 - per_bot) * area_bot;
+	        if (het < min_het)
+	        {
+	            best_line[0] = pt_left;
+	            best_line[1] = pt_right;
+	            min_het = het;
+	        }
+	    }
+	}
+
+	// Retrieval of the best line
+	pt_left = best_line[0];
+	pt_right = best_line[1];
+	// Height adjustment of the line
+	    //pt_left = Point((int)pt_left.x, (int)(pt_left.y - adjust_pt1));
+	    //pt_right = Point((int)pt_right.x, (int)(pt_right.y + adjust_pt2));
+	// Line construction y = a*x + b
+	double a = ((double)pt_right.y - (double)pt_left.y) / ((double)pt_right.x - (double)pt_left.x);
+	double b = (double)pt_left.y - a * (double)pt_left.x;
+
+	Mat matImage(height, width, CV_8UC3, image);
+	line(matImage, pt_left, pt_right, Scalar(0, 0, 255), 3);
+
+	//Mask construction
+	for(int y =0; y< height; y++)
+	{
+	    for(int x =0;x<width;x++)
+	    {
+	        if((a*x+b)<y)
+	        {
+	            maskSurface[x+y*width] = 1;
+	        }
+	        else
+	        {
+	            maskSurface[x+y*width] = 0;
+	        }
+	    }
+	}
+	memcpy(dest, matImage.data, 3* height*width);
+}
+/*
 xt::xarray<unsigned char> normRGB(xt::xarray<unsigned char> images, int width, int height)
 {
     if(images.dimension()==3)
@@ -563,5 +635,5 @@ xt::xarray<unsigned char> normRGB(xt::xarray<unsigned char> images, int width, i
         exit(1);
     }
 
-}
+}*/
 
