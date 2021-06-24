@@ -119,7 +119,7 @@ void resize(unsigned char *src, unsigned char *dest, int *x_rect, int *y_rect, i
     }
     else
     {
-        printf("error in resize image\n");
+        //printf("error in resize image\n");
     }
 }
 void resizeWithPadding(unsigned char *src, unsigned char *dest, int *x_rect, int *y_rect, int *width_rect, int *height_rect, int width, int height, int width_final, int height_final)

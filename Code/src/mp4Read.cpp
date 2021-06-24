@@ -3,12 +3,12 @@
 //
 
 #include "mp4Read.h"
+#include "clock.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <libavcodec/avcodec.h>
-
+#define FPS_MEAN 49
 #define INBUF_SIZE 4096
 
 static FILE *pipein;
@@ -16,8 +16,9 @@ static FILE *pipein;
 static int id_frame = 0;
 //static enum PixelFormat pix_fmt = RGB;
 //static enum VideoFile video_file = SWIMMER;
-static char* url = "../data/Nage_Chrono_SV_1080_60fps_Cam1_cut_rescale.MP4";
-static char* urlLineDetection = "../data/lineDetect_rescale.mp4";
+static const char* url = "../data/Nage_Chrono_SV_1080_60fps_Cam1_cut_rescale.MP4";
+static const char* urlLineDetection = "../data/lineDetect_rescale.mp4";
+static const char* urlFullVideo = "../data/swimmer_rescale.mp4";
 
 
 typedef struct RGBDisplay
@@ -25,6 +26,7 @@ typedef struct RGBDisplay
     SDL_Texture* texture;
     SDL_Window *window;
     SDL_Renderer *renderer;
+    int stampId;
 } RGBDisplay;
 
 static RGBDisplay display;
@@ -41,6 +43,9 @@ void initMp4Read(enum VideoFile video_file, enum PixelFormat pix_fmt)
         case SWIMMER:
             strcat(command, url);
             break;
+        case FULL_VIDEO:
+        	strcat(command, urlFullVideo);
+        	break;
         default :
             strcat(command, url);
             break;
@@ -109,13 +114,13 @@ int mp4ReadYUV(FILE* pipein, int width, int height, unsigned char *y,  unsigned 
     }
 }
 
-int mp4Read(int width, int height, unsigned char *pixels, unsigned char *output2)
+int mp4Read(int width, int height, unsigned char *pixels/*, unsigned char *output2*/)
 {
     int count;
 
     count = fread(pixels, 1, height*width*3, pipein);
     //Double the output to resize the image at the end of the dataflow(not very clean)
-    memcpy(output2, pixels, height*width*3);
+    //memcpy(output2, pixels, height*width*3);
     if (count != height*width*3)
     {
         printf("End of the file");
@@ -164,6 +169,11 @@ void initMp4Display(int width, int height)
         fprintf(stderr, "SDL: could not create renderer - exiting\n");
         exit(1);
     }
+
+    /*display.stampId = 0;
+    	for (int i = 0; i<FPS_MEAN; i++){
+    		startTiming(i + 1);
+    	}*/
 }
 
 void mp4DisplayRGB(int width, int height, unsigned char *r, unsigned char *g, unsigned char *b)
@@ -187,11 +197,11 @@ void mp4DisplayRGB(int width, int height, unsigned char *r, unsigned char *g, un
     //Fill an array of pixels 32bits
     Uint32 *img;
     SDL_PixelFormat *format;
-    void *tmp;
+    Uint32 *tmp;
     int pitch;
 
     format = SDL_AllocFormat(SDL_PIXELFORMAT_RGB888);
-    SDL_LockTexture(display.texture, NULL, &tmp, &pitch);
+    SDL_LockTexture(display.texture, NULL, (void**)&tmp, &pitch);
     img=tmp;
     for(int y=0;y<height;y++)
     {
@@ -228,11 +238,11 @@ void mp4Display(int width, int height, unsigned char *pixels)
     //Fill an array of pixels 32bits
     Uint32 *img;
     SDL_PixelFormat *format;
-    void *tmp;
+    Uint32 *tmp;
     int pitch;
 
     format = SDL_AllocFormat(SDL_PIXELFORMAT_RGB888);
-    SDL_LockTexture(display.texture, NULL, &tmp, &pitch);
+    SDL_LockTexture(display.texture, NULL, (void**)&tmp, &pitch);
     img=tmp;
     for(int y=0;y<height;y++)
     {
@@ -245,7 +255,13 @@ void mp4Display(int width, int height, unsigned char *pixels)
     SDL_UnlockTexture(display.texture);
     SDL_RenderCopy(display.renderer, display.texture, NULL, NULL);
     SDL_RenderPresent(display.renderer);
-    SDL_Delay(5);
+
+    char fps_text[20];
+
+    /*int time = stopTiming(display.stampId + 1);
+    printf("FPS: %.2f", 1. / (time / 1000000. / FPS_MEAN));
+    startTiming(display.stampId + 1);
+    display.stampId = (display.stampId + 1) % FPS_MEAN;*/
 }
 
 void mp4DisplayWB(int width, int height, unsigned char* pixels)
@@ -269,11 +285,11 @@ void mp4DisplayWB(int width, int height, unsigned char* pixels)
     //Fill an array of pixels 32bits
     Uint32 *img;
     SDL_PixelFormat *format;
-    void *tmp;
+    Uint32 *tmp;
     int pitch;
 
     format = SDL_AllocFormat(SDL_PIXELFORMAT_RGB888);
-    SDL_LockTexture(display.texture, NULL, &tmp, &pitch);
+    SDL_LockTexture(display.texture, NULL, (void**)&tmp, &pitch);
     img=tmp;
     for(int y=0;y<height;y++)
     {
@@ -286,7 +302,6 @@ void mp4DisplayWB(int width, int height, unsigned char* pixels)
     SDL_UnlockTexture(display.texture);
     SDL_RenderCopy(display.renderer, display.texture, NULL, NULL);
     SDL_RenderPresent(display.renderer);
-    SDL_Delay(50);
 }
 
 void finalizeMp4Display()
