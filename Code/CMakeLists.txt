@@ -109,20 +109,49 @@ if (WIN32)
 	endif()
 endif()
 
+
+# *******************************************
+# ************ Spider LIBRARY ***************
+# *******************************************
+ 
+# find the spider folder in the libspider directory.
+file(GLOB SPIDERDIR "${LIBS_DIR}/spider")
+set(ENV{SPIDERDIR} ${SPIDERDIR})
+ 
+Find_Package (Spider REQUIRED )
+ 
+if(NOT SPIDER_FOUND)
+  MESSAGE(FATAL_ERROR "SPIDER not found !")
+endif()
+ 
+if (WIN32)
+    file(GLOB
+        SPIDER_DLL
+        ${SPIDERDIR}/lib/*.dll
+    )
+     
+    MESSAGE("Copy SPIDER DLLs into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    if(NOT ${CMAKE_GENERATOR} MATCHES "Visual Studio.*")
+        file(COPY ${SPIDER_DLL} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    else()
+        file(COPY ${SPIDER_DLL} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        file(COPY ${SPIDER_DLL} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    endif()
+endif()
+
 # *******************************************
 # ************ OpenCV LIBRARY **************
 # *******************************************
 
-find_package( OpenCV REQUIRED )
-
+find_package(OpenCV REQUIRED )
 find_package(jsoncpp CONFIG REQUIRED)
 
 # *******************************************
 # ************ Object		   **************
 # *******************************************
 
-add_library(Image OBJECT ${CMAKE_CURRENT_SOURCE_DIR}/src/Image.cpp)
-add_library(ImageWrapper OBJECT ${CMAKE_CURRENT_SOURCE_DIR}/src/ImageWrapper.cpp)
+# add_library(Image OBJECT ${CMAKE_CURRENT_SOURCE_DIR}/src/Image.cpp)
+# add_library(ImageWrapper OBJECT ${CMAKE_CURRENT_SOURCE_DIR}/src/ImageWrapper.cpp)
 
 # *******************************************
 # **************** SwimmerDetection.exe  ****************
@@ -131,12 +160,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_D
 file(
 	GLOB_RECURSE
 	source_files
-	./src/*.c
+	./src/*.cpp
 	./src/*.h
 	./include/*.h
-	./generated/*.c
+	./generated/*.cpp
 	./generated/*.h
 )
 
 add_executable( SwimmerDetection_c ${source_files} ${header_files})
-target_link_libraries(SwimmerDetection_c ${SDL2_LIBRARY} ${SDL2TTF_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_EXTRA_LIB} ${OpenCV_LIBS} ${SPIDER_LIBRARY} jsoncpp Image ImageWrapper )
+target_link_libraries(SwimmerDetection_c ${SDL2_LIBRARY} ${SDL2TTF_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_EXTRA_LIB} ${OpenCV_LIBS} ${SPIDER_LIBRARY} jsoncpp)
