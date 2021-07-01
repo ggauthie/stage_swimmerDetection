@@ -41,25 +41,25 @@
 
 static int id_frame = 0;
 
-void selector(int nb_frames_init, OUT Param *initDone, OUT Param * selectLineConstruction)
+void selector(int nb_frames_init, OUT Param *initDone, OUT Param * lineConstruction)
 {
 
 	if(id_frame <nb_frames_init)
 	{
 		(*initDone)= 0;
-		(*selectLineConstruction)=0;
+		(*lineConstruction)=0;
 		id_frame++;
 	}
-	else if(id_frame ==nb_frames_init)
+	else if(id_frame == nb_frames_init)
 	{
 		(*initDone) = 0;
-		(*selectLineConstruction)=1;
+		(*lineConstruction)=1;
 		id_frame++;
 	}
 	else
 	{
 		(*initDone)=1;
-		(*selectLineConstruction)=0;
+		(*lineConstruction)=0;
 		id_frame++;
 	}
 }

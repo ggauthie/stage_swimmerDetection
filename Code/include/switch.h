@@ -45,24 +45,7 @@
  * @brief Output a parameter (0 or 1) based on user choice.
  * @param value Pointer to the parameter value to be set.
  */
-void selector(int nb_frames_init, OUT Param *initDone, OUT Param * selectLineConstruction);
+void selector(int nb_frames_init, OUT Param *initDone, OUT Param * lineConstruction);
 
-/**
- * @brief Send data to either one the branches of the switch.
- * @param data  Data to be sent.
- */
-void dataProvider(OUT char *data);
-
-/**
- * @brief Print a message indicating that the value 0 was set by the user.
- * @param data  Received data.
- */
-void branchZero(IN char *data);
-
-/**
- * @brief Print a message indicating that the value 1 was set by the user.
- * @param data  Received data.
- */
-void branchOne(IN char *data);
 
 #endif
