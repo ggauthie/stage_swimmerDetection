@@ -14,18 +14,18 @@
 #include <SDL_image.h>
 
 
-typedef enum PixelFormat PixelFormat;
-enum PixelFormat
+typedef enum PixelFormat
 {
     RGB,
     YUV420
 };
 
-typedef enum VideoFile VideoFile;
-enum VideoFile
+//typedef enum VideoFile VideoFile;
+typedef enum VideoFile
 {
     INIT,
-    SWIMMER
+    SWIMMER,
+	FULL_VIDEO
 };
 /**
 * Function used to read a MP4 file of size width*height*3 frame by frame.
@@ -73,7 +73,7 @@ int mp4ReadYUV(FILE* pipein, int width, int height, unsigned char *y,  unsigned 
 *       the array of size 3*width*height with all the values of pixels of the image int this format (RGB RGB RGB...)
 *
 */
-int mp4Read(int width, int height, unsigned char *pixels, unsigned char *output2);
+int mp4Read(int width, int height, unsigned char *pixels/*, unsigned char *output2*/);
 
 /**
 * Function used to read init the pipe used to execute the command "ffmpeg" int the terminal.
@@ -142,7 +142,6 @@ void mp4DisplayRGB( int width, int height, unsigned char *r, unsigned char *g, u
 *
 */
 void mp4Display(int width, int height, unsigned char* pixels);
-void fillTab(unsigned char *dest, int width, int height,int nb_frames);
 
 /**
 * Function used to display an image of size (width*height).

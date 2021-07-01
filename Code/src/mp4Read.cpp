@@ -4,21 +4,22 @@
 
 #include "mp4Read.h"
 #include "clock.h"
+#include <SDL_ttf.h>
+#include <SDL_image.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define FPS_MEAN 49
-#define INBUF_SIZE 4096
 
 static FILE *pipein;
 
 static int id_frame = 0;
-//static enum PixelFormat pix_fmt = RGB;
-//static enum VideoFile video_file = SWIMMER;
+
 static const char* url = "../data/Nage_Chrono_SV_1080_60fps_Cam1_cut_rescale.MP4";
 static const char* urlLineDetection = "../data/lineDetect_rescale.mp4";
-static const char* urlFullVideo = "../data/swimmer_rescale.mp4";
+static const char* urlFullVideo = "../data/Testset/test.mp4";
 
 
 typedef struct RGBDisplay
@@ -26,6 +27,7 @@ typedef struct RGBDisplay
     SDL_Texture* texture;
     SDL_Window *window;
     SDL_Renderer *renderer;
+    TTF_Font *text_font;
     int stampId;
 } RGBDisplay;
 
@@ -76,13 +78,13 @@ int mp4ReadRGB(int width, int height, unsigned char *r, unsigned char *g, unsign
     // Read a frame from the input pipe into the buffer
     count = fread(frame, 1, height*width*3, pipein);
 
-// If we didn't get a frame of video, we're probably at the end
+    // If we didn't get a frame of video, we're probably at the end
     if (count != height*width*3)
     {
             printf("End of the file");
             return 0;
     }
-// Fill the 3 tabs r,g & b with the component of the frame (struc : RGB RGB RGB)
+    // Fill the 3 tabs r,g & b with the component of the frame (struc : RGB RGB RGB)
     else
     {
         for (y=0 ; y<height ; ++y) for (x=0 ; x<width ; ++x)
@@ -91,7 +93,6 @@ int mp4ReadRGB(int width, int height, unsigned char *r, unsigned char *g, unsign
                 g[y*width+x] = frame[3*y*width+3*x + 1];
                 b[y*width+x] = frame[3*y*width+3*x + 2];
         }
-        //fwrite(frame, 1, height*width*3, pipeout);
         return count;
     }
 }
@@ -114,18 +115,13 @@ int mp4ReadYUV(FILE* pipein, int width, int height, unsigned char *y,  unsigned 
     }
 }
 
-int mp4Read(int width, int height, unsigned char *pixels/*, unsigned char *output2*/)
+int mp4Read(int width, int height, unsigned char *pixels)
 {
     int count;
-
     count = fread(pixels, 1, height*width*3, pipein);
-    //Double the output to resize the image at the end of the dataflow(not very clean)
-    //memcpy(output2, pixels, height*width*3);
     if (count != height*width*3)
     {
         printf("End of the file");
-        fflush(pipein);
-        pclose(pipein);
         return count;
     }
     else
@@ -170,10 +166,25 @@ void initMp4Display(int width, int height)
         exit(1);
     }
 
-    /*display.stampId = 0;
-    	for (int i = 0; i<FPS_MEAN; i++){
+    /* Initialize SDL TTF for text display */
+    if (TTF_Init())
+    {
+        printf("TTF initialization failed: %s\n", TTF_GetError());
+    }
+    printf("TTF_Init\n");
+
+    //Init the font for fps text
+    display.text_font = TTF_OpenFont("../data/DejaVuSans.ttf", 20);
+    if (!display.text_font)
+    {
+        printf("TTF_OpenFont: %s\n", TTF_GetError());
+    }
+
+    display.stampId = 0;
+    for (int i = 0; i<FPS_MEAN; i++)
+    {
     		startTiming(i + 1);
-    	}*/
+    }
 }
 
 void mp4DisplayRGB(int width, int height, unsigned char *r, unsigned char *g, unsigned char *b)
@@ -254,14 +265,42 @@ void mp4Display(int width, int height, unsigned char *pixels)
     SDL_FreeFormat(format);
     SDL_UnlockTexture(display.texture);
     SDL_RenderCopy(display.renderer, display.texture, NULL, NULL);
+
+    //Draw fps text
+    char fps_text[20];
+    SDL_Color colorWhite = { 255, 255, 255, 255 };
+
+    int time = stopTiming(display.stampId + 1);
+    sprintf(fps_text, "FPS: %.2f", 1. / (time / 1000000. / FPS_MEAN));
+    startTiming(display.stampId + 1);
+    display.stampId = (display.stampId + 1) % FPS_MEAN;
+
+    SDL_Surface* fpsText = TTF_RenderText_Blended(display.text_font, fps_text, colorWhite);
+    SDL_Texture* fpsTexture = SDL_CreateTextureFromSurface(display.renderer, fpsText);
+
+    int fpsWidth, fpsHeight;
+    SDL_QueryTexture(fpsTexture, NULL, NULL, &fpsWidth, &fpsHeight);
+    SDL_Rect fpsTextRect;
+
+    //Draw IOU text
+    char iou_text[20] = "IOU : 0.87";
+
+    SDL_Surface* iouText = TTF_RenderText_Blended(display.text_font, fps_text, colorWhite);
+    SDL_Texture* iouTexture = SDL_CreateTextureFromSurface(display.renderer, fpsText);
+
+    SDL_QueryTexture(fpsTexture, NULL, NULL, &fpsWidth, &fpsHeight);
+
+    fpsTextRect.x = width/2;
+    fpsTextRect.y = 0;
+    fpsTextRect.w = fpsWidth;
+    fpsTextRect.h = fpsHeight;
+    SDL_RenderCopy(display.renderer, iouTexture, NULL, &fpsTextRect);
+
+    SDL_FreeSurface(iouText);
+    SDL_DestroyTexture(iouTexture);
+
     SDL_RenderPresent(display.renderer);
 
-    char fps_text[20];
-
-    /*int time = stopTiming(display.stampId + 1);
-    printf("FPS: %.2f", 1. / (time / 1000000. / FPS_MEAN));
-    startTiming(display.stampId + 1);
-    display.stampId = (display.stampId + 1) % FPS_MEAN;*/
 }
 
 void mp4DisplayWB(int width, int height, unsigned char* pixels)
@@ -301,6 +340,49 @@ void mp4DisplayWB(int width, int height, unsigned char* pixels)
     SDL_FreeFormat(format);
     SDL_UnlockTexture(display.texture);
     SDL_RenderCopy(display.renderer, display.texture, NULL, NULL);
+
+    //Draw fps text
+    char fps_text[20];
+    SDL_Color colorWhite = { 255, 255, 255, 255 };
+
+    int time = stopTiming(display.stampId + 1);
+    sprintf(fps_text, "FPS: %.2f", 1. / (time / 1000000. / FPS_MEAN));
+    startTiming(display.stampId + 1);
+    display.stampId = (display.stampId + 1) % FPS_MEAN;
+
+    SDL_Surface* fpsText = TTF_RenderText_Blended(display.text_font, fps_text, colorWhite);
+    SDL_Texture* fpsTexture = SDL_CreateTextureFromSurface(display.renderer, fpsText);
+
+    int fpsWidth, fpsHeight;
+    SDL_QueryTexture(fpsTexture, NULL, NULL, &fpsWidth, &fpsHeight);
+    SDL_Rect fpsTextRect;
+
+    fpsTextRect.x = 0;
+    fpsTextRect.y = 0;
+    fpsTextRect.w = fpsWidth;
+    fpsTextRect.h = fpsHeight;
+    SDL_RenderCopy(display.renderer, fpsTexture, NULL, &fpsTextRect);
+
+    SDL_FreeSurface(fpsText);
+    SDL_DestroyTexture(fpsTexture);
+
+    //Draw IOU text
+    char iou_text[20] = "IOU : 0.87"; // à redéfinir
+
+    SDL_Surface* iouText = TTF_RenderText_Blended(display.text_font, iou_text, colorWhite);
+    SDL_Texture* iouTexture = SDL_CreateTextureFromSurface(display.renderer, iouText);
+
+    SDL_QueryTexture(fpsTexture, NULL, NULL, &fpsWidth, &fpsHeight);
+
+    fpsTextRect.x = width/2;
+    fpsTextRect.y = 0;
+    fpsTextRect.w = fpsWidth;
+    fpsTextRect.h = fpsHeight;
+    SDL_RenderCopy(display.renderer, iouTexture, NULL, &fpsTextRect);
+
+    SDL_FreeSurface(iouText);
+    SDL_DestroyTexture(iouTexture);
+
     SDL_RenderPresent(display.renderer);
 }
 
