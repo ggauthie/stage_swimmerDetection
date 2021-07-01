@@ -5,7 +5,7 @@
 #ifndef SWIMMERDETECTION_C_IMAGEWRAPPER_H
 #define SWIMMERDETECTION_C_IMAGEWRAPPER_H
 
-#pragma once
+#include "rectangle.h"
 
 /*
  * use C name mangling if compiling as C++ code.
@@ -14,6 +14,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
 /**
 * Function used to detect the swimmer in a frame with the CannyEdge method.
 *
@@ -59,7 +62,7 @@ void swimmerAlgo(unsigned char *src, unsigned char* dest, int width, int height)
 *       the array of size 3*width*height with all the values of pixels of the image with the bounding box
 *
 */
-void swimmerAlgoDynamic(unsigned char *src,unsigned char *dest, int width, int height);
+void swimmerAlgoDynamic(unsigned char *src, unsigned char *dest, int width, int height, Rectangle *box);
 
 /**
 * Median Blur Filter
@@ -112,7 +115,8 @@ void cvtColorHSV(unsigned char *src, unsigned char *dest, int width, int height)
 *
 */
 void maskCreationSimple(unsigned char *src, unsigned char *dest, int width, int height);
-void maskCreation(unsigned char *src, unsigned char* mask, unsigned char *dest, int width, int height);
+void maskCreation(unsigned char *src, unsigned char *dest, int width, int height);
+void maskSurface(unsigned char* src, int width, int height);
 
 /**
 * Function used to compute the variance on each component of each pixel on all frames
@@ -219,7 +223,7 @@ void closing(unsigned char *src, unsigned char *dest, int width, int height, int
 *       output : the height of the bounding box
 *
 */
-void boxConstruction(unsigned char* src,int width, int height, int *x_rect,int *y_rect, int *width_rect, int *height_rect);
+void boxConstruction(unsigned char* src,int width, int height, Rectangle* box);
 
 /**
 * Function used to convert the format of the image : RGB to WB format

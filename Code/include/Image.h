@@ -13,11 +13,7 @@
 #include "opencv2/imgproc.hpp"
 #include <opencv2/saliency.hpp>
 
-#include "xtensor/xtensor.hpp"
-#include "xtensor/xarray.hpp"
-#include "xtensor/xio.hpp"
-#include "xtensor/xadapt.hpp"
-#include "xtensor-blas/xlinalg.hpp"
+#include "rectangle.h"
 
 using namespace cv;
 using namespace std;
@@ -67,8 +63,7 @@ void otsuMethod_cpp(unsigned char *src, unsigned char* dest, int width, int heig
 *       the array of size 3*width*height with all the values of pixels of the image with the bounding box
 *
 */
-void swimmerAlgoDynamic_cpp(unsigned char *pixels, unsigned char* mask, unsigned char* dest, int width, int height, int *x_rect, int *y_rect, int *width_rect, int *height_rect);
-
+void swimmerAlgoDynamic_cpp(unsigned char *src, unsigned char *dest, int width, int height,Rectangle *box);
 /**
 * Median Blur Filter
 *
@@ -120,7 +115,7 @@ void cvtColorHSV_cpp(unsigned char *src, unsigned char *dest, int width, int hei
 *
 */
 void maskCreationSimple_cpp(unsigned char *src, unsigned char *dest, int width, int height);
-void maskCreation_cpp(unsigned char *src, unsigned char* mask, unsigned char *dest, int width, int height);
+void maskCreation_cpp(unsigned char *src, unsigned char *dest, int width, int height);
 
 /**
 * Function used to compute the variance on each component of each pixel on all frames
@@ -210,7 +205,7 @@ void closing_cpp(unsigned char *src, unsigned char *dest, int width, int height,
 *       output : the height of the bounding box
 *
 */
-void boxConstruction_cpp(unsigned char* src, int width, int height, int *x_rect,int *y_rect, int *width_rect, int *height_rect);
+void boxConstruction_cpp(unsigned char* src, int width, int height, Rectangle* box);
 
 /**
 * Function used to convert the format of the image : RGB to WB format
@@ -246,7 +241,7 @@ void saliencySpectralRes_cpp(unsigned char* src, unsigned char* dest, int width,
 *
 */
 void surfaceDetection_cpp(unsigned char* src, unsigned char *image, unsigned char *dest, int width, int height);
-void maskSurface_cpp(unsigned char* src, unsigned char * image, unsigned char *dest, int width, int height);
+void maskSurface_cpp(unsigned char* src, int width, int height);
 
 /**
 * Function used to detect the swimmer in a frame using median blur filter, threshold and color filter on HSV components
@@ -261,7 +256,7 @@ void maskSurface_cpp(unsigned char* src, unsigned char * image, unsigned char *d
 *       the array of size 3*width*height with all the values of pixels of the image with the bounding box
 *
 */
-void swimmerAlgoDynamic_cpp(unsigned char *src, unsigned char *dest, int width, int height);
+void swimmerAlgoDynamic_cpp(unsigned char *src, unsigned char *dest, int width, int height, int *x_rect, int *y_rect, int *width_rect, int *height_rect);
 
 /**
 * Function which returns the IOU : the area of intersection of 2 rect divided by hte area of the union of 2 rects
@@ -285,7 +280,6 @@ double iouMetrics_cpp(Rect r1, Rect r2);
 *        the height of the input/output image
 *
 */
-xt::xarray<unsigned char> normRGB(xt::xarray<unsigned char> images, int width, int height);
 void cvtToWB_cpp(unsigned char* src, unsigned char* dest, int width, int height);
 /**
 * Function which returns a vector of Rect of bounding box

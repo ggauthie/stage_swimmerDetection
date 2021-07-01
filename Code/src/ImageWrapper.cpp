@@ -17,8 +17,8 @@ using namespace std;
 extern "C" {
 #endif
     static int id_frame = 0;
-    static long sumVar[3*360*640];
-    static long sumVarSq[3*360*640];
+    static long sumVar[3*480*640];
+    static long sumVarSq[3*480*640];
     static int nb_frames =1;
 void cannyMethod(unsigned char *src, unsigned char* dest, int width, int height)
 {
@@ -35,9 +35,9 @@ void swimmerAlgo(unsigned char *src, unsigned char* dest, int width, int height,
     Image_instance->swimmerAlgo(src,dest,width,height, x_rect, y_rect, width_rect, height_rect);
 }*/
 
-void swimmerAlgoDynamic(unsigned char *src, unsigned char *dest, int width, int height)
+void swimmerAlgoDynamic(unsigned char *src, unsigned char *dest, int width, int height,Rectangle *box)
 {
-	swimmerAlgoDynamic_cpp(src, dest,width, height);
+	swimmerAlgoDynamic_cpp(src, dest, width, height, box);
 }
 
 void medianFilter(unsigned char *src, unsigned char *dest, int width, int height, int nb_channels)
@@ -55,14 +55,14 @@ void maskCreationSimple(unsigned char *src, unsigned char *dest, int width, int 
 	maskCreationSimple_cpp(src, dest, width, height);
 }
 
-void maskCreation(unsigned char *src, unsigned char* mask, unsigned char *dest, int width, int height)
+void maskCreation(unsigned char *src, unsigned char *dest, int width, int height)
 {
-    maskCreation_cpp(src, mask, dest, width, height);
+    maskCreation_cpp(src, dest, width, height);
 }
 
-void boxConstruction(unsigned char* src, int width, int height, int *x_rect,int *y_rect, int *width_rect, int *height_rect)
+void boxConstruction(unsigned char* src, int width, int height, Rectangle *box)
 {
-    boxConstruction_cpp(src, width, height, x_rect, y_rect, width_rect, height_rect);
+    boxConstruction_cpp(src, width, height, box);
 }
 
 void cvtToWB(unsigned char* src, unsigned char* dest, int width, int height)
@@ -148,6 +148,11 @@ void opening(unsigned char *src, unsigned char *dest, int width, int height, int
 void closing(unsigned char *src, unsigned char *dest, int width, int height, int k)
 {
     closing_cpp(src, dest, width, height, k);
+}
+
+void maskSurface(unsigned char* src, int width, int height)
+{
+	maskSurface_cpp(src,width,height);
 }
 /*void readJson()
 {
