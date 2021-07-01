@@ -4,117 +4,78 @@
 
 #include "resize.h"
 #include <stdio.h>
-#include "stdlib.h"
+#include <stdlib.h>
+#include <cstring>
 #include "math.h"
 
-void resize(unsigned char *src, unsigned char *dest, int *x_rect, int *y_rect, int *width_rect, int *height_rect, int width, int height, int width_final, int height_final)
+void resize(unsigned char *src, unsigned char *dest, Rectangle *box, int width, int height, int width_final, int height_final)
 {
-    if(src!=NULL && dest!=NULL && *width_rect!=0 && *height_rect!=0)
+    if(src!=NULL && dest!=NULL && box->w!=0 && box->h!=0)
     {
-        unsigned char box[3**width_rect**height_rect];
+        unsigned char img[3*box->w*box->h];
 
-        if (((double)*width_rect/(double)width_final) > ((double)*height_rect/(double)height_final))
+        if (((double)box->w/(double)width_final) > ((double)box->h/(double)height_final))
         {
-            double ratio = (double)width_final/(double)*width_rect;
+            double ratio = (double)width_final/(double)box->w;
 
-            int width_resize = width_final, height_resize= ratio**height_rect;
+            int width_resize = width_final, height_resize= ratio*box->h;
 
             int padding_top = (height_final-height_resize)/2;
             int padding_bottom = (height_final-height_resize) - padding_top;
             unsigned char resizeBox[3*width_resize*height_resize];
 
             // Crop the image around the box
-            for (int y = 0; y < *height_rect; y++)
+            for (int y = 0; y < box->h; y++)
             {
-                for (int x = 0; x < *width_rect; x++)
-                {
-                    box[3 * (x + y * *width_rect)] = src[3 * (x + *x_rect + (y + *y_rect) * width)];
-                    box[3 * (x + y * *width_rect) + 1] = src[3 * (x + *x_rect + (y + *y_rect) * width) + 1];
-                    box[3 * (x + y * *width_rect) + 2] = src[3 * (x + *x_rect + (y + *y_rect) * width) + 2];
-                }
+            	memcpy(img + 3*y*box->w, src + 3 *(box->x +(y+box->y)*width), 3*(box->w));
             }
             // Resize the cropped image with new height and width
-            resizeBilinear(box, resizeBox, *width_rect, *height_rect, width_resize, height_resize);
+            resizeBilinear(img, resizeBox, box->w, box->h, width_resize, height_resize);
+
             //Fill the image padding top in black
-            for(int x = 0; x < width_resize;x++)
-            {
-                for(int y = 0; y < padding_top; y++)
-                {
-                    dest[3 * (x + y * width_resize)] = 0;
-                    dest[3 * (x + y * width_resize) + 1] = 0;
-                    dest[3 * (x + y * width_resize) + 2] = 0;
-                }
-            }
+            memset(dest,0, 3*width_final*padding_top);
+
             // fill the image destination with the image resize
-            for(int x = 0; x < width_resize;x++)
-            {
-                for(int y = 0; y < height_resize; y++)
-                {
-                    dest[3 * (x + (padding_top + y) * width_resize)] = resizeBox[3 * (x + y * width_resize)];
-                    dest[3 * (x + (padding_top + y) * width_resize) + 1] = resizeBox[3 * (x + y * width_resize) + 1];
-                    dest[3 * (x + (padding_top + y) * width_resize) + 2] = resizeBox[3 * (x + y * width_resize) + 2];
-                }
-            }
+            memcpy(dest + 3 *padding_top*width_final, resizeBox, 3*width_final*height_resize);
+
             //Fill the image padding bottom in black
-            for(int x = 0; x < width_resize;x++)
-            {
-                for(int y = 0; y < padding_bottom; y++)
-                {
-                    dest[3 * (x + (padding_top + height_resize + y) * width_resize)] = 0;
-                    dest[3 * (x + (padding_top + height_resize + y) * width_resize) + 1] = 0;
-                    dest[3 * (x + (padding_top + height_resize + y) * width_resize) + 2] = 0;
-                }
-            }
+            memset(dest + 3 *(padding_top + height_resize)* width_final,0, 3*width_final*padding_bottom);
+
         }
         else
         {
-            double ratio = (double)height_final/(double)*height_rect;
-            int width_resize = *width_rect*ratio, height_resize= height_final;
+            double ratio = (double)height_final/(double)box->h;
+            int width_resize = box->w*ratio, height_resize= height_final;
             int padding_left = (width_final-width_resize)/2;
             int padding_right = (width_final-width_resize) - padding_left;
             unsigned char resizeBox[3*width_resize*height_resize];
-            // Crop the image around the box
-            for (int y = 0; y < *height_rect; y++)
+            // Crop the image around the img
+            for (int y = 0; y < box->h; y++)
             {
-                for (int x = 0; x < *width_rect; x++)
-                {
-                    box[3 * (x + y * *width_rect)] = src[3 * (x + *x_rect + (y + *y_rect) * width)];
-                    box[3 * (x + y * *width_rect) + 1] = src[3 * (x + *x_rect + (y + *y_rect) * width) + 1];
-                    box[3 * (x + y * *width_rect) + 2] = src[3 * (x + *x_rect + (y + *y_rect) * width) + 2];
-                }
+            	memcpy(img + 3*y*box->w, src + 3 *(box->x +(y+box->y)*width), 3*(box->w));
+
+
             }
             // Resize the cropped image with new height and width
-            resizeBilinear(box, resizeBox, *width_rect, *height_rect, width_resize, height_resize);
-            //Fill the image padding top in black
-            for(int x = 0; x < padding_left;x++)
+            resizeBilinear(img, resizeBox, box->w, box->h, width_resize, height_resize);
+            //Fill the image padding left in black
+            for(int y = 0; y < height_final; y++)
             {
-                for(int y = 0; y < height_resize; y++)
-                {
-                    dest[3 * (x + y * width_final)] = 0;
-                    dest[3 * (x + y * width_final) + 1] = 0;
-                    dest[3 * (x + y * width_final) + 2] = 0;
-                }
+            	memset(dest + 3*y*width_final, 0, 3*padding_left);
             }
+
             // fill the image destination with the image resize
-            for(int x = 0; x < width_resize;x++)
+            for(int y = 0; y < height_final; y++)
             {
-                for(int y = 0; y < height_resize; y++)
-                {
-                    dest[3 * (x + padding_left + y * width_final)] = resizeBox[3 * (x + y * width_resize)];
-                    dest[3 * (x + padding_left + y * width_final)+ 1] = resizeBox[3 * (x + y * width_resize)+ 1];
-                    dest[3 * (x + padding_left + y * width_final)+ 2] = resizeBox[3 * (x + y * width_resize)+ 2];
-                }
+            	memcpy(dest + 3*y*width_final + 3*padding_left, resizeBox + y*3*width_resize, 3*width_resize);
             }
-            //Fill the image padding bottom in black
-            for(int x = 0; x < padding_right;x++)
+
+            //Fill the image padding rightin black
+            for(int y = 0; y < height_final; y++)
             {
-                for(int y = 0; y < height_resize; y++)
-                {
-                    dest[3 * (x + padding_left + width_resize + y * width_final)] = 0;
-                    dest[3 * (x + padding_left + width_resize + y * width_final) + 1] = 0;
-                    dest[3 * (x + padding_left + width_resize + y * width_final) + 2] = 0;
-                }
+            	memset(dest + 3*y*width_final + 3*(padding_left +width_resize), 0, 3*padding_right);
             }
+
         }
     }
     else
@@ -122,10 +83,7 @@ void resize(unsigned char *src, unsigned char *dest, int *x_rect, int *y_rect, i
         //printf("error in resize image\n");
     }
 }
-void resizeWithPadding(unsigned char *src, unsigned char *dest, int *x_rect, int *y_rect, int *width_rect, int *height_rect, int width, int height, int width_final, int height_final)
-{
 
-}
 
 void resizeBilinear(unsigned char *src, unsigned char *dest, int w, int h, int w2, int h2)
 {
