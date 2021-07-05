@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+    <key attr.name="parameters" for="graph" id="parameters"/>
+    <key attr.name="variables" for="graph" id="variables"/>
+    <key attr.name="arguments" for="node" id="arguments"/>
+    <key attr.name="name" attr.type="string" for="graph"/>
+    <key attr.name="graph_desc" attr.type="string" for="node"/>
+    <graph edgedefault="directed">
+        <data key="name">swimmerDetection</data>
+        <node expr="224" id="width_final" kind="param"/>
+        <node expr="224" id="height_final" kind="param"/>
+        <node defaultValue="480" id="height" kind="cfg_in_iface"/>
+        <node defaultValue="640" id="width" kind="cfg_in_iface"/>
+        <node id="initDone" kind="cfg_in_iface"/>
+        <node expr="1" id="componentIndex" kind="param"/>
+        <node expr="1" id="nb_channels" kind="param"/>
+        <node id="boxConstruction" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="boxConstruction">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="OUT" isConfig="false"
+                    name="box" type="Rectangle "/>
+            </loop>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="select"/>
+            <port annotation="NONE" expr="height*width*select"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="1*select" kind="output" name="box"/>
+        </node>
+        <node id="resize" kind="actor">
+            <data key="graph_desc">Code/include/resize.h</data>
+            <loop name="resize">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+                <param direction="IN" isConfig="false" name="box" type="Rectangle "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="width_final" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height_final" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="width_final"/>
+            <port kind="cfg_input" name="height_final"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="select"/>
+            <port annotation="NONE" expr="3*height*width*select"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="1*select" kind="input" name="box"/>
+            <port annotation="NONE"
+                expr="3*height_final*width_final*select"
+                kind="output" name="dest"/>
+        </node>
+        <node id="cvtColor" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="cvtColorHSV">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="select"/>
+            <port annotation="NONE" expr="3*height*width*select"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="3*height*width*select"
+                kind="output" name="dest"/>
+        </node>
+        <node id="maskSurface" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="combineMask">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="select"/>
+            <port annotation="NONE" expr="height*width*select"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="height*width*select"
+                kind="output" name="dest"/>
+        </node>
+        <node id="src" kind="src">
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="output" name="src"/>
+        </node>
+        <node id="image" kind="src">
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="output" name="image"/>
+        </node>
+        <node id="mp4Display" kind="actor">
+            <data key="graph_desc">Code/include/mp4Read.h</data>
+            <loop name="mp4Display">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false"
+                    name="pixels" type="unsigned char "/>
+            </loop>
+            <init name="initMp4Display">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </init>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="select"/>
+            <port annotation="NONE" expr="3*height*width*select"
+                kind="input" name="pixels"/>
+        </node>
+        <node id="computeLikelihood" kind="actor">
+            <data key="graph_desc">Code/include/GMM.h</data>
+            <loop name="calculate_likelihood">
+                <param direction="IN" isConfig="false"
+                    name="data" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="likelihood" type="float "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </loop>
+            <init name="initGMM_Model"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="select"/>
+            <port annotation="NONE" expr="3*height*width*select"
+                kind="input" name="data"/>
+            <port annotation="NONE" expr="2*height*width*select"
+                kind="output" name="likelihood"/>
+        </node>
+        <node id="maskGMM" kind="actor">
+            <data key="graph_desc">Code/include/GMM.h</data>
+            <loop name="createMaskGMM_model">
+                <param direction="IN" isConfig="false"
+                    name="likelihood" type="float "/>
+                <param direction="OUT" isConfig="false"
+                    name="mask" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="component_index" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="component_index"/>
+            <port kind="cfg_input" name="select"/>
+            <port annotation="NONE" expr="2*height*width*select"
+                kind="input" name="likelihood"/>
+            <port annotation="NONE" expr="height*width*select"
+                kind="output" name="mask"/>
+        </node>
+        <node id="deleteLight" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="deleteLight">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="select"/>
+            <port annotation="NONE" expr="3*height*width*select"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="height*width*select"
+                kind="output" name="dest"/>
+        </node>
+        <node id="broadcastFrame" kind="broadcast">
+            <port kind="cfg_input" name="select"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE" expr="3*height*width*select"
+                kind="input" name="input"/>
+            <port annotation="NONE" expr="3*height*width*select"
+                kind="output" name="o_1"/>
+            <port annotation="NONE" expr="3*height*width*select"
+                kind="output" name="o_0"/>
+        </node>
+        <node id="combineMask" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="bitwise_and">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="IN" isConfig="false"
+                    name="mask" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="nb_channels" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="select"/>
+            <port kind="cfg_input" name="nb_channels"/>
+            <port annotation="NONE" expr="height*width*select"
+                kind="input" name="mask"/>
+            <port annotation="NONE" expr="height*width*select"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="height*width*select"
+                kind="output" name="dest"/>
+        </node>
+        <edge kind="fifo" source="maskSurface" sourceport="dest"
+            target="combineMask" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="image" sourceport="image"
+            target="resize" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="boxConstruction"
+            sourceport="box" target="resize" targetport="box" type="Rectangle"/>
+        <edge kind="fifo" source="resize" sourceport="dest"
+            target="mp4Display" targetport="pixels" type="unsigned char"/>
+        <edge kind="fifo" source="src" sourceport="src"
+            target="cvtColor" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="cvtColor" sourceport="dest"
+            target="broadcastFrame" targetport="input" type="unsigned char"/>
+        <edge kind="fifo" source="computeLikelihood"
+            sourceport="likelihood" target="maskGMM"
+            targetport="likelihood" type="float"/>
+        <edge kind="fifo" source="maskGMM" sourceport="mask"
+            target="maskSurface" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="broadcastFrame"
+            sourceport="o_1" target="deleteLight"
+            targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="broadcastFrame"
+            sourceport="o_0" target="computeLikelihood"
+            targetport="data" type="unsigned char"/>
+        <edge kind="fifo" source="deleteLight" sourceport="dest"
+            target="combineMask" targetport="mask" type="unsigned char"/>
+        <edge kind="fifo" source="combineMask" sourceport="dest"
+            target="boxConstruction" targetport="src" type="unsigned char"/>
+        <edge kind="dependency" source="width_final"
+            target="resize" targetport="width_final"/>
+        <edge kind="dependency" source="height_final"
+            target="resize" targetport="height_final"/>
+        <edge kind="dependency" source="width" target="cvtColor" targetport="width"/>
+        <edge kind="dependency" source="width"
+            target="maskSurface" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="maskSurface" targetport="height"/>
+        <edge kind="dependency" source="width"
+            target="boxConstruction" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="boxConstruction" targetport="height"/>
+        <edge kind="dependency" source="width" target="resize" targetport="width"/>
+        <edge kind="dependency" source="height" target="resize" targetport="height"/>
+        <edge kind="dependency" source="height" target="image"/>
+        <edge kind="dependency" source="width" target="image"/>
+        <edge kind="dependency" source="width" target="src"/>
+        <edge kind="dependency" source="height" target="src"/>
+        <edge kind="dependency" source="initDone"
+            target="cvtColor" targetport="select"/>
+        <edge kind="dependency" source="initDone"
+            target="maskSurface" targetport="select"/>
+        <edge kind="dependency" source="initDone"
+            target="boxConstruction" targetport="select"/>
+        <edge kind="dependency" source="initDone" target="resize" targetport="select"/>
+        <edge kind="dependency" source="initDone" target="image"/>
+        <edge kind="dependency" source="initDone" target="src"/>
+        <edge kind="dependency" source="height_final"
+            target="mp4Display" targetport="height"/>
+        <edge kind="dependency" source="width_final"
+            target="mp4Display" targetport="width"/>
+        <edge kind="dependency" source="initDone"
+            target="mp4Display" targetport="select"/>
+        <edge kind="dependency" source="width"
+            target="computeLikelihood" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="computeLikelihood" targetport="height"/>
+        <edge kind="dependency" source="height" target="maskGMM" targetport="height"/>
+        <edge kind="dependency" source="width" target="maskGMM" targetport="width"/>
+        <edge kind="dependency" source="componentIndex"
+            target="maskGMM" targetport="component_index"/>
+        <edge kind="dependency" source="initDone"
+            target="computeLikelihood" targetport="select"/>
+        <edge kind="dependency" source="initDone"
+            target="maskGMM" targetport="select"/>
+        <edge kind="dependency" source="height" target="cvtColor" targetport="height"/>
+        <edge kind="dependency" source="height"
+            target="deleteLight" targetport="height"/>
+        <edge kind="dependency" source="width"
+            target="deleteLight" targetport="width"/>
+        <edge kind="dependency" source="initDone"
+            target="deleteLight" targetport="select"/>
+        <edge kind="dependency" source="height"
+            target="combineMask" targetport="height"/>
+        <edge kind="dependency" source="width"
+            target="combineMask" targetport="width"/>
+        <edge kind="dependency" source="initDone"
+            target="combineMask" targetport="select"/>
+        <edge kind="dependency" source="initDone"
+            target="broadcastFrame" targetport="select"/>
+        <edge kind="dependency" source="width"
+            target="broadcastFrame" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="broadcastFrame" targetport="height"/>
+        <edge kind="dependency" source="nb_channels"
+            target="combineMask" targetport="nb_channels"/>
+    </graph>
+</graphml>
