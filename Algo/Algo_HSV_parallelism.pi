@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+    <key attr.name="parameters" for="graph" id="parameters"/>
+    <key attr.name="variables" for="graph" id="variables"/>
+    <key attr.name="arguments" for="node" id="arguments"/>
+    <key attr.name="name" attr.type="string" for="graph"/>
+    <key attr.name="graph_desc" attr.type="string" for="node"/>
+    <graph edgedefault="directed">
+        <data key="name">swimmerDetection</data>
+        <node expr="3" id="nb_channels" kind="param"/>
+        <node defaultValue="480" id="height" kind="cfg_in_iface"/>
+        <node defaultValue="640" id="width" kind="cfg_in_iface"/>
+        <node defaultValue="8" id="nbSlice" kind="cfg_in_iface"/>
+        <node expr="height/nbSlice+2" id="sliceHeight" kind="param"/>
+        <node id="boxConstruction" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="boxConstruction">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="OUT" isConfig="false"
+                    name="box" type="Rectangle "/>
+            </loop>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE" expr="height*width"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="1" kind="output" name="box"/>
+        </node>
+        <node id="cvtColorHSV" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="cvtColorHSV">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="output" name="dest"/>
+        </node>
+        <node id="maskCreation" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="segmentationHSV">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="height*width"
+                kind="output" name="dest"/>
+        </node>
+        <node id="src" kind="src">
+            <port annotation="NONE" expr="3*height*width"
+                kind="output" name="src"/>
+        </node>
+        <node id="box" kind="snk">
+            <port annotation="NONE" expr="1" kind="input" name="box"/>
+        </node>
+        <node id="split" kind="actor">
+            <data key="graph_desc">Code/include/splitMerge.h</data>
+            <loop name="split">
+                <param direction="IN" isConfig="true"
+                    name="nbSlice" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false"
+                    name="input" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="output" type="unsigned char "/>
+            </loop>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="nbSlice"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="input" name="input"/>
+            <port annotation="NONE"
+                expr=" nbSlice * (width*3) * ((height/nbSlice)+2)"
+                kind="output" name="output"/>
+        </node>
+        <node id="merge" kind="actor">
+            <data key="graph_desc">Code/include/splitMerge.h</data>
+            <loop name="mergeGray">
+                <param direction="IN" isConfig="true"
+                    name="nbSlice" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false"
+                    name="input" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="output" type="unsigned char "/>
+            </loop>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="nbSlice"/>
+            <port annotation="NONE"
+                expr="nbSlice*(height/nbSlice+2)*width"
+                kind="input" name="input"/>
+            <port annotation="NONE" expr="height*width"
+                kind="output" name="output"/>
+        </node>
+        <edge kind="fifo" source="cvtColorHSV" sourceport="dest"
+            target="maskCreation" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="boxConstruction"
+            sourceport="box" target="box" targetport="box" type="Rectangle"/>
+        <edge kind="fifo" source="src" sourceport="src"
+            target="split" targetport="input" type="unsigned char"/>
+        <edge kind="fifo" source="split" sourceport="output"
+            target="cvtColorHSV" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="maskCreation" sourceport="dest"
+            target="merge" targetport="input" type="unsigned char"/>
+        <edge kind="fifo" source="merge" sourceport="output"
+            target="boxConstruction" targetport="src" type="unsigned char"/>
+        <edge kind="dependency" source="width"
+            target="cvtColorHSV" targetport="width"/>
+        <edge kind="dependency" source="width"
+            target="maskCreation" targetport="width"/>
+        <edge kind="dependency" source="width"
+            target="boxConstruction" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="boxConstruction" targetport="height"/>
+        <edge kind="dependency" source="width" target="src"/>
+        <edge kind="dependency" source="height" target="src"/>
+        <edge kind="dependency" source="height" target="sliceHeight"/>
+        <edge kind="dependency" source="nbSlice" target="sliceHeight"/>
+        <edge kind="dependency" source="sliceHeight"
+            target="maskCreation" targetport="height"/>
+        <edge kind="dependency" source="sliceHeight"
+            target="cvtColorHSV" targetport="height"/>
+        <edge kind="dependency" source="width" target="merge" targetport="width"/>
+        <edge kind="dependency" source="width" target="split" targetport="width"/>
+        <edge kind="dependency" source="nbSlice" target="split" targetport="nbSlice"/>
+        <edge kind="dependency" source="height" target="split" targetport="height"/>
+        <edge kind="dependency" source="height" target="merge" targetport="height"/>
+        <edge kind="dependency" source="nbSlice" target="merge" targetport="nbSlice"/>
+    </graph>
+</graphml>
