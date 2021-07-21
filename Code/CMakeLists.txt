@@ -145,7 +145,6 @@ if (WIN32)
 	endif()
 endif()
 
-
 # *******************************************
 # ************ Spider LIBRARY ***************
 # *******************************************
@@ -175,6 +174,7 @@ if (WIN32)
     endif()
 endif()
 
+
 # *******************************************
 # ************ OpenCV LIBRARY **************
 # *******************************************
@@ -185,24 +185,86 @@ find_package(jsoncpp CONFIG REQUIRED)
 # *******************************************
 # ************ Object		   **************
 # *******************************************
+option(STATIC "Static Project" ON)
 
-# add_library(Image OBJECT ${CMAKE_CURRENT_SOURCE_DIR}/src/Image.cpp)
-# add_library(ImageWrapper OBJECT ${CMAKE_CURRENT_SOURCE_DIR}/src/ImageWrapper.cpp)
+if(STATIC)
+	add_library(Image OBJECT ${CMAKE_CURRENT_SOURCE_DIR}/src/Image.cpp)
+	add_library(ImageWrapper OBJECT ${CMAKE_CURRENT_SOURCE_DIR}/src/ImageWrapper.cpp)
+endif()
 
 # *******************************************
 # **************** SwimmerDetection.exe  ****************
 # *******************************************
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/generated ${SDL2_INCLUDE_DIR} ${SDL2TTF_INCLUDE_DIR} ${THREADS_PTHREADS_INCLUDE_DIR} ${SPIDER_INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS})
-file(
+
+if(STATIC)
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/clock.cpp")
+		file(RENAME src/clock.cpp src/clock.c)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/crop.cpp")
+		file(RENAME src/crop.cpp src/crop.c)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/GMM.cpp")
+		file(RENAME src/GMM.cpp src/GMM.c)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/mp4Read.cpp")
+		file(RENAME src/mp4Read.cpp src/mp4Read.c)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/resize.cpp")
+		file(RENAME src/resize.cpp src/resize.c)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/splitMerge.cpp")
+		file(RENAME src/splitMerge.cpp src/splitMerge.c)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/voteSystem.cpp")
+		file(RENAME src/voteSystem.cpp src/voteSystem.c)
+	endif()
+	file(
+	GLOB_RECURSE
+	source_files
+	./src/*.c
+	./src/*.h
+	./include/*.h
+	./generated/*.c
+	./generated/*.h
+)
+else()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/clock.c")
+		file(RENAME src/clock.c src/clock.cpp)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/crop.c")
+		file(RENAME src/crop.c src/crop.cpp)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/GMM.c")
+		file(RENAME src/GMM.c src/GMM.cpp)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/mp4Read.c")
+		file(RENAME src/mp4Read.c src/mp4Read.cpp)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/resize.c")
+		file(RENAME src/resize.c src/resize.cpp)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/splitMerge.c")
+		file(RENAME src/splitMerge.c src/splitMerge.cpp)
+	endif()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/voteSystem.c")
+		file(RENAME src/voteSystem.c src/voteSystem.cpp)
+	endif()
+	file(
 	GLOB_RECURSE
 	source_files
 	./src/*.cpp
+	./src/*.c
 	./src/*.h
 	./include/*.h
-		./main.cpp
-	#./generated/*.cpp
-	#./generated/*.h
+	./generated/*.cpp
+	./generated/*.h
 )
+endif()
 
-add_executable( SwimmerDetection_c ${source_files} ${header_files})
-target_link_libraries(SwimmerDetection_c ${SDL2_LIBRARY} ${SDL2TTF_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_EXTRA_LIB} ${OpenCV_LIBS} ${SPIDER_LIBRARY} jsoncpp)
+add_executable(SwimmerDetection_c ${source_files} ${header_files})
+if(STATIC)
+	target_link_libraries(SwimmerDetection_c ${SDL2_LIBRARY} ${SDL2TTF_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_EXTRA_LIB} ${OpenCV_LIBS} ${SPIDER_LIBRARY} jsoncpp Image ImageWrapper)
+else()
+	target_link_libraries(SwimmerDetection_c ${SDL2_LIBRARY} ${SDL2TTF_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_EXTRA_LIB} ${OpenCV_LIBS} ${SPIDER_LIBRARY} jsoncpp)
+endif()
