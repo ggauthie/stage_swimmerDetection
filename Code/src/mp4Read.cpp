@@ -18,9 +18,8 @@ static FILE *pipein;
 static int id_frame = 0;
 
 static const char* url = "../data/Nage_Chrono_SV_1080_60fps_Cam1_cut_rescale.MP4";
-static const char* urlLineDetection = "../data/lineDetect_rescale.mp4";
-static const char* urlFullVideo = "../data/Testset/test.mp4";
-
+static const char* urlLineDetection = "../data/Testset/background/rescale_T1.mp4";
+static const char* urlFullVideo = "../data/images/Testset/video2/video_2.mp4";
 
 typedef struct RGBDisplay
 {
@@ -34,37 +33,13 @@ typedef struct RGBDisplay
 static RGBDisplay display;
 
 
-void initMp4Read(enum VideoFile video_file, enum PixelFormat pix_fmt)
+void initMp4Read()
 {
 	char command[200] = "ffmpeg -i ";
-    switch (video_file)
-    {
-        case INIT:
-            strcat(command, urlLineDetection);
-            break;
-        case SWIMMER:
-            strcat(command, url);
-            break;
-        case FULL_VIDEO:
-        	strcat(command, urlFullVideo);
-        	break;
-        default :
-            strcat(command, url);
-            break;
-    }
-	strcat(command, " -f image2pipe -vcodec rawvideo -pix_fmt ");
-	switch (pix_fmt)
-	{
-	    case RGB:
-	        strcat(command, "rgb24 -");
-	        break;
-	    case YUV420:
-	        strcat(command, "yuv420p -");
-	        break;
-	    default :
-            strcat(command, "rgb24 -");
-            break;
-	 }
+
+    strcat(command, urlFullVideo);
+	strcat(command, " -f image2pipe -vcodec rawvideo -pix_fmt rgb24 -");
+
 	    // Open an input pipe from ffmpeg
 	pipein = popen(command, "r");
 	printf("command : %s",command);
@@ -117,12 +92,12 @@ int mp4ReadYUV(FILE* pipein, int width, int height, unsigned char *y,  unsigned 
 
 int mp4Read(int width, int height, unsigned char *pixels)
 {
-    int count;
+    int count = 0;
     count = fread(pixels, 1, height*width*3, pipein);
     if (count != height*width*3)
     {
         printf("End of the file");
-        return count;
+        return 0;
     }
     else
     {
@@ -272,6 +247,7 @@ void mp4Display(int width, int height, unsigned char *pixels)
 
     int time = stopTiming(display.stampId + 1);
     sprintf(fps_text, "FPS: %.2f", 1. / (time / 1000000. / FPS_MEAN));
+    printf(" FPS : %f\n", 1. / (time / 1000000. / FPS_MEAN));
     startTiming(display.stampId + 1);
     display.stampId = (display.stampId + 1) % FPS_MEAN;
 
