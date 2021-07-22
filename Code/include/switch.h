@@ -37,6 +37,7 @@
 #define PREESM_SWITCH_EXAMPLE_H
 
 #include <spider.h>
+#include "rectangle.h"
 
 #define IN
 #define OUT
@@ -46,6 +47,8 @@
  * @param value Pointer to the parameter value to be set.
  */
 void selector(int nb_frames_init, OUT Param *initDone, OUT Param * lineConstruction);
+
+void selectGMM(float *iou, OUT Param *activeGMM);
 
 
 #endif

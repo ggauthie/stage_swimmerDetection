@@ -34,9 +34,6 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include "switch.h"
 
 static int id_frame = 0;
@@ -61,6 +58,18 @@ void selector(int nb_frames_init, OUT Param *initDone, OUT Param * lineConstruct
 		(*initDone)=1;
 		(*lineConstruction)=0;
 		id_frame++;
+	}
+}
+
+void selectGMM(float *iou, OUT Param *activeGMM)
+{
+	if((*iou)<0.5)
+	{
+		(*activeGMM)=1;
+	}
+	else
+	{
+		(*activeGMM)=0;
 	}
 }
 
