@@ -20,73 +20,34 @@ extern "C" {
     static long sumVar[3*480*640];
     static long sumVarSq[3*480*640];
     static int nb_frames =1;
-void cannyMethod(unsigned char *src, unsigned char* dest, int width, int height)
-{
-    cannyMethod_cpp(src,dest,width,height);
-}
 
-void otsuMethod(unsigned char *src, unsigned char* dest, int width, int height)
-{
-    otsuMethod_cpp(src,dest,width,height);
-}
-/*
-void swimmerAlgo(unsigned char *src, unsigned char* dest, int width, int height, int *x_rect, int *y_rect, int *width_rect, int *height_rect)
-{
-    Image_instance->swimmerAlgo(src,dest,width,height, x_rect, y_rect, width_rect, height_rect);
-}*/
 
-void swimmerAlgoDynamic(unsigned char *src, unsigned char *dest, int width, int height,Rectangle *box)
+void swimmerAlgoDynamic(int width, int height,unsigned char *src, unsigned char *dest, Rectangle *box)
 {
 	swimmerAlgoDynamic_cpp(src, dest, width, height, box);
 }
 
-void medianFilter(unsigned char *src, unsigned char *dest, int width, int height, int nb_channels)
+void medianFilter(int width, int height, int nb_channels, unsigned char *src, unsigned char *dest)
 {
     medianFilter_cpp(src, dest, width, height, nb_channels);
 }
 
-void cvtColorHSV(unsigned char *src, unsigned char *dest, int width, int height)
+void cvtColorHSV(int width, int height, unsigned char *src, unsigned char *dest)
 {
     cvtColorHSV_cpp(src, dest, width,height);
 }
 
-void maskCreationSimple(unsigned char *src, unsigned char *dest, int width, int height)
+void boxConstruction(int width, int height,unsigned char* src, Rectangle *bb)
 {
-	maskCreationSimple_cpp(src, dest, width, height);
+    boxConstruction_cpp(src, width, height, bb);
 }
 
-void maskCreation(unsigned char *src, unsigned char *dest, int width, int height)
-{
-    maskCreation_cpp(src, dest, width, height);
-}
-
-void boxConstruction(unsigned char* src, int width, int height, Rectangle *box)
-{
-    boxConstruction_cpp(src, width, height, box);
-}
-
-void cvtToWB(unsigned char* src, unsigned char* dest, int width, int height)
+void cvtToWB(int width, int height, unsigned char* src, unsigned char* dest)
 {
 	cvtToWB_cpp(src,dest,width,height);
 }
 
-void saliencySpectralRes(unsigned char* src, unsigned char* dest, int width, int height)
-{
-    saliencySpectralRes_cpp(src,dest,width,height);
-}
-
-void saliencyFineGrained(unsigned char* src, unsigned char* dest, int width, int height)
-{
-    saliencyFineGrained_cpp(src,dest,width,height);
-}
-
-void surfaceDetection(unsigned char* src, unsigned char* dest,int width, int height) {
-	unsigned char norm[height*width];
-	normRGB(src, norm,width, height);
-	surfaceDetection_cpp(norm, src, dest, width,height);
-}
-
-void normRGB(unsigned char* src, unsigned char *dest, int width, int height)
+void normRGB(int width, int height, unsigned char* src, unsigned char *dest)
 {
     for(int i = 0; i < height; i++)
     {
@@ -97,9 +58,8 @@ void normRGB(unsigned char* src, unsigned char *dest, int width, int height)
     }
 }
 
-void variance(unsigned char *src, unsigned char *dest, int width, int height, int nb_frames)
+void variance( int width, int height, int nb_frames, unsigned char *src, unsigned char *dest)
 {
-    //variance_cpp(src, dest, width, height, nb_frames);
     for(int j=0; j < height; j++)
     {
         for(int i =0; i< width; i++)
@@ -119,7 +79,7 @@ void variance(unsigned char *src, unsigned char *dest, int width, int height, in
     }
 }
 
-void variance_iter(unsigned char *src, unsigned char *dest, int width, int height)
+void variance_iter(int width, int height, unsigned char *src, unsigned char *dest)
 {
     //variance_cpp(src, dest, width, height, nb_frames);
     for(int j=0; j < height; j++)
@@ -136,24 +96,76 @@ void variance_iter(unsigned char *src, unsigned char *dest, int width, int heigh
     }
     nb_frames++;
 }
-void threshold(unsigned char *src, unsigned char *dest, int width, int height, int thresh)
+void threshold(int width, int height, int thresh, unsigned char *src, unsigned char *dest)
 {
     threshold_cpp(src, dest, width, height, thresh);
 }
-void opening(unsigned char *src, unsigned char *dest, int width, int height, int k)
+void opening(int width, int height, int k, unsigned char *src, unsigned char *dest)
 {
     opening_cpp(src, dest, width, height,k);
 }
 
-void closing(unsigned char *src, unsigned char *dest, int width, int height, int k)
+void closing(int width, int height, int k, unsigned char *src, unsigned char *dest)
 {
     closing_cpp(src, dest, width, height, k);
 }
 
-void maskSurface(unsigned char* src, int width, int height)
+void generateMaskSurface(int width, int height, unsigned char* src)
 {
-	maskSurface_cpp(src,width,height);
+    generateMaskSurface_cpp(src,width,height);
 }
+
+void applyMaskSurface(int width, int height, unsigned char *src, unsigned char *dest)
+{
+    applyMaskSurface_cpp(src, dest, width, height);
+}
+
+void deleteLight(int width, int height, unsigned char *src, unsigned char *dest)
+{
+    deleteLight_cpp(src, dest, width, height);
+}
+
+void bitwise_and(unsigned char *src, unsigned char * mask, unsigned char *dest, int width, int height, int nb_channels)
+{
+    bitwise_and_cpp(src,mask, dest,width,height, nb_channels);
+}
+
+void segmentationHSV(int width, int height, unsigned char *src, unsigned char *dest)
+{
+    segmentationHSV_cpp(src, dest, width, height);
+}
+
+void segmentationYUV(int width, int height, unsigned char *src, unsigned char *dest)
+{
+     segmentationYUV_cpp(src, dest, width, height);
+}
+
+void cvtColorRGBtoYUV(int width, int height, unsigned char *src, unsigned char *dest)
+{
+    cvtColorRGBtoYUV_cpp(src, dest, width, height);
+}
+
+void mergeBox(Rectangle *box1, Rectangle *box2, Rectangle *boxMerged)
+{
+    mergeBox_cpp(box1, box2, boxMerged);
+}
+
+void drawRectangle(int width, int height, unsigned char *src, Rectangle *bb, unsigned char *dest)
+{
+    drawRectangle_cpp(src, dest, bb, width, height);
+}
+
+void iou(Rectangle *r1, Rectangle* r2, float* iou)
+{
+	(*iou)= iou_cpp(r1, r2);
+}
+
+float iou_1(Rectangle *r1, Rectangle* r2)
+{
+	return iou_cpp(r1, r2);
+}
+
+
 /*void readJson()
 {
     Image_instance->readJson();
