@@ -1,6 +1,9 @@
 #ifndef SWIMMERDETECTION_C_GMM_H
 #define SWIMMERDETECTION_C_GMM_H
 
+#include <stdbool.h>
+#include "hocl.h"
+
 typedef struct
 {
     int dimension_data; //number of datas, (ex : 3 for RGB pixels)
@@ -14,15 +17,17 @@ typedef struct
     bool diag;
 }GaussianMixtureModel;
 
-void initGMM_Model(int dimension_data, int number_gaussian_components, float* weight, float* mean, float* diag_covariance, bool diag);
+void initGMM_Model_dynamic(int dimension_data, int number_gaussian_components, float* weight, float* mean, float* covariance, bool diag);
+void initGMM_Model();
 void initGMM_Model_diagonal_covariance(int dimension_data, int number_gaussian_components, float* weight, float* mean, float* diag_covariance);
 void initGMM_Model_covariance(int dimension_data, int number_gaussian_components, float* weight, float* mean, float* covariance);
 float gaussian_distribution_diagonal(unsigned char *data, int component_index);
 float gaussian_distribution(unsigned char *data, int component_index);
-void calculate_likelihood(unsigned char* data, float* likelihood, int width, int height);
+void calculate_likelihood(int width, int height, unsigned char* data, float* likelihood);
+void display_GMM_Model();
 
-void createMaskGMM_model(float* likelihood, unsigned char* mask, float threshold, int height, int width, int component_index);
-float determinant( float *matrix, int k);
+void createMaskGMM_model(int  width, int height, int component_index, float* likelihood, unsigned char* mask);
+float determinant(float *matrix, int k);
 void inverseMatrix(float *M, float *N, int n);
 
 #endif //SWIMMERDETECTION_C_GMM_H

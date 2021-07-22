@@ -4,17 +4,41 @@
 
 #include <math.h>
 #include "GMM.h"
+#include "stdio.h"
 
 static GaussianMixtureModel gmm_model;
 
-void initGMM_Model(int dimension_data, int number_gaussian_components, float* weight, float* mean, float* covariance, bool diag)
+/**
+* Function which initilaize the Gaussian Mixture Model structure with predefined values of weights, mean and covariance.
+* Number of gaussian components defined by 2(swimmer and not swimmer).
+* The dimension of data is equal to 3 for RGB values.
+*
+*/
+void initGMM_Model()
 {
-    gmm_model.diag = diag;
-    if(!diag)
-        initGMM_Model_covariance(dimension_data,number_gaussian_components,weight,mean,covariance);
-    else
-        initGMM_Model_diagonal_covariance(dimension_data,number_gaussian_components,weight,mean,covariance);
+	gmm_model.diag = false;
+	float weights[2] = {0.91877657, 0.08122343};
+
+	float means[2*3]= {0.39258381, 0.84564908, 0.60911731,
+	                   0.32858844, 0.29239769, 0.63100097};
+
+	float covariances[2*3*3]= { 0.00022252,  0.00085817, -0.00094149,
+	                            0.00085817 , 0.01783262 ,-0.01192008,
+	                            -0.00094149 ,-0.01192008 , 0.02473054,
+	                            0.01059483 , 0.00722826 ,-0.00230984,
+	                            0.00722826 , 0.04293822 ,-0.03735482,
+	                            -0.00230984 ,-0.03735482 , 0.07915357};
+
+	initGMM_Model_covariance(3,2,weights,means,covariances);
+	display_GMM_Model();
 }
+
+/**
+* Function which initilaize the Gaussian Mixture Model structure with predefined values of weights, mean and covariance.
+* Number of gaussian components defined by 2(swimmer and not swimmer).
+* The dimension of data is equal to 3 for RGB values.
+* The model of covariance is not diagonal.
+*/
 void initGMM_Model_covariance(int dimension_data, int number_gaussian_components, float* weight, float* mean, float* covariance)
 {
     gmm_model.dimension_data = dimension_data;
@@ -40,6 +64,11 @@ void initGMM_Model_covariance(int dimension_data, int number_gaussian_components
     }
 }
 
+/**
+* Function which initilaize the Gaussian Mixture Model structure with predefined values of weights, mean and covariance.
+* The model of covariance is diagonal.
+*/
+
 void initGMM_Model_diagonal_covariance(int dimension_data, int number_gaussian_components, float* weight, float* mean, float* diag_covariance)
 {
     gmm_model.dimension_data = dimension_data;
@@ -58,6 +87,35 @@ void initGMM_Model_diagonal_covariance(int dimension_data, int number_gaussian_c
     }
 }
 
+/**
+* Function which displays the Gaussian Mixture Model values of weights, mean, determinant, inversed covariance and covariance.
+*/
+
+void display_GMM_Model()
+{
+    for(int i=0; i<gmm_model.number_gaussian_components;i++)
+    {
+        printf("weights : %f \n", gmm_model.weight[i]);
+        printf("Det : %f \n", gmm_model.determinant_covariance[i]);
+        for(int j=0; j< gmm_model.dimension_data; j++)
+        {
+            printf("Means : %f \n",gmm_model.mean[i*gmm_model.dimension_data + j]);
+            for(int k=0; k< gmm_model.dimension_data; k++) {
+                printf("Covariance : %f \n", gmm_model.covariance[i *(gmm_model.dimension_data*gmm_model.dimension_data) + j*gmm_model.dimension_data + k]);
+                printf("Inversed Covariance : %f \n", gmm_model.inversed_covariance[i *(gmm_model.dimension_data*gmm_model.dimension_data) + j*gmm_model.dimension_data + k]);
+            }
+        }
+    }
+}
+
+/**
+* Function which computes the Gaussian distribution on each pixel. This function works only on diagonal covariance model.
+*
+* @param data
+*        The pointer on the data array of dimension equal to dimension_data
+* @param component_index
+* 		 The index used to select one of the gaussian component
+*/
 float gaussian_distribution_diagonal(unsigned char *data, int component_index)
 {
     float determinant = 1;
@@ -73,11 +131,19 @@ float gaussian_distribution_diagonal(unsigned char *data, int component_index)
     return result;
 }
 
+/**
+* Function which computes the Gaussian distribution on each pixel.
+*
+* @param data
+*        The pointer on the data array of dimension equal to dimension_data
+* @param component_index
+* 		 The index used to select one of the gaussian component
+*/
 float gaussian_distribution(unsigned char *data, int component_index)
 {
     float result;
     float sum = 0;
-    if(!gmm_model.diag)
+    if(gmm_model.diag == false)
     {
         for (int i = 0; i < gmm_model.dimension_data; i++){
             float partial_sum = 0;
@@ -88,16 +154,24 @@ float gaussian_distribution(unsigned char *data, int component_index)
             sum += partial_sum * ((float)data[i]/255 - gmm_model.mean[component_index*gmm_model.dimension_data + i]);
         }
         result = 1.0 / (pow(2 * 3.1415926535897931, gmm_model.dimension_data / 2.0) * sqrt(gmm_model.determinant_covariance[component_index])) * exp(-0.5 * sum);
+        //printf("Result : %f", result);
         return result;
     }
     else
     {
-        gaussian_distribution_diagonal(data,component_index);
+        return gaussian_distribution_diagonal(data,component_index);
     }
-
 }
 
-void calculate_likelihood(unsigned char* data, float* likelihood, int width, int height)
+/**
+* Function which computes the likelihood of each pixel on each gaussian component.
+*
+* @param data
+*
+* @param likelihood
+* 		 The index used to select one of the gaussian component
+*/
+void calculate_likelihood(int width, int height, unsigned char* data, float* likelihood)
 {
     float gauss[gmm_model.number_gaussian_components*height*width];
     for(int i =0; i < height;i++)
@@ -113,23 +187,25 @@ void calculate_likelihood(unsigned char* data, float* likelihood, int width, int
             for (int k = 0; k < gmm_model.number_gaussian_components; k++)
             {
                 likelihood[k*(width*height) + i*width +j] = (gmm_model.weight[k] * gauss[k*(height*width) + i*width + j])/div;
-                //printf("%s\n", (gaussian_distribution_2(&data[3*(i*width + j)], k)==gaussian_distribution_1(&data[3*(i*width + j)], k)) ? "true" : "false");
+                //printf("likelihood : %f\n", likelihood[k*(width*height) + i*width +j]);
             }
         }
     }
 }
 
-void createMaskGMM_model(float* likelihood, unsigned char* mask, float threshold, int height, int width, int component_index)
+void createMaskGMM_model(int width, int height, int component_index, float* likelihood, unsigned char* mask)
 {
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            mask[i * width + j] = likelihood[component_index * (height * width) + i * width + j] > threshold ? 255 : 0;
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            mask[i * width + j] = likelihood[component_index * (height * width) + i * width + j] > 0.5 ? 255 : 0;
         }
     }
 }
 
 
-float determinant( float *matrix, int k)
+float determinant(float *matrix, int k)
 {
     float s = 1, det = 0;
     float temp[k*k];
@@ -174,7 +250,6 @@ float determinant( float *matrix, int k)
 void inverseMatrix(float *M, float *N, int n)
 {
     int m = n;
-
     if (m == 1)
     {
         N[0]= 1 / M[0];
@@ -182,7 +257,6 @@ void inverseMatrix(float *M, float *N, int n)
     else if (m >= 2)
     {
         float T[n*n];
-
         for (int i = 0; i < m; i++)
         {
             for (int j = 0; j < m; j++)
