@@ -6,7 +6,9 @@
 #define SWIMMERDETECTION_C_RESIZE_H
 
 #include "crop.h"
+#include "rectangle.h"
+#include <string.h>
 
-void resize(unsigned char *src, unsigned char *dest, int *x_rect, int *y_rect, int *width_rect, int *height_rect, int width, int height, int width_final, int height_final);
+void resize(unsigned char *src, unsigned char *dest, Rectangle * box, int width, int height, int width_final, int height_final);
 void resizeBilinear(unsigned char *src, unsigned char *dest, int w, int h, int w2, int h2);
 #endif //SWIMMERDETECTION_C_RESIZE_H

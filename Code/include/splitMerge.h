@@ -30,7 +30,7 @@
 * @param output
 *        the output buffer of size nbSlice*[width*(height/nbSlice+2)]
 */
-void splitGray(int nbSlice, int width, int height, IN unsigned char *input, OUT unsigned char *output);
+void splitGray(int nbSlice, int width, int height, IN unsigned char *src, OUT unsigned char *dest);
 
 /**
 * Function used to split an input image of size width*height*3 into nbSlices
@@ -48,7 +48,7 @@ void splitGray(int nbSlice, int width, int height, IN unsigned char *input, OUT 
 * @param output
 *        the output buffer of size nbSlice*[width*(height/nbSlice+2)]
 */
-void split(int nbSlice, int width, int height, IN unsigned char *input, OUT unsigned char *output);
+void split(int nbSlice, int width, int height, IN unsigned char *src, OUT unsigned char *dest);
 
 /**
 * Function used to assemble nbSlices slices of size width*(height/nbSlice+2)
@@ -65,7 +65,7 @@ void split(int nbSlice, int width, int height, IN unsigned char *input, OUT unsi
 * @param output
 *        the output image of size width*height
 */
-void merge(int nbSlice, int width, int height, IN unsigned char *input, OUT unsigned char *output);
+void merge(int nbSlice, int width, int height, IN unsigned char *src, OUT unsigned char *dest);
 
 /**
 * Function used to assemble nbSlices slices of size width*(height/nbSlice+2)
@@ -82,5 +82,5 @@ void merge(int nbSlice, int width, int height, IN unsigned char *input, OUT unsi
 * @param output
 *        the output image of size width*height
 */
-void mergeGray(int nbSlice, int width, int height, unsigned char *input, unsigned char *output);
+void mergeGray(int nbSlice, int width, int height, unsigned char *src, unsigned char *dest);
 #endif

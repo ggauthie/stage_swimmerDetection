@@ -13,20 +13,6 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 
-
-typedef enum PixelFormat PixelFormat;
-enum PixelFormat
-{
-    RGB,
-    YUV420
-};
-
-typedef enum VideoFile VideoFile;
-enum VideoFile
-{
-    INIT,
-    SWIMMER
-};
 /**
 * Function used to read a MP4 file of size width*height*3 frame by frame.
 * Unsigned char* r, g & b are filled with the values of each pixel component.
@@ -73,21 +59,13 @@ int mp4ReadYUV(FILE* pipein, int width, int height, unsigned char *y,  unsigned 
 *       the array of size 3*width*height with all the values of pixels of the image int this format (RGB RGB RGB...)
 *
 */
-int mp4Read(int width, int height, unsigned char *pixels, unsigned char *output2);
+int mp4Read(int width, int height, unsigned char *pixels);
 
 /**
-* Function used to read init the pipe used to execute the command "ffmpeg" int the terminal.
-* Output with all the values of pixels.
-*
-* @param video_file
-*        enum VideoFile used to choose the file to read :
- *        INIT(video permitting the detection of the water surface) or SWIMMER(video on which we have to detect the swimmer)
-* @param pix_fmt
-*       enum PixelFormat used to choose the format in which to read the file:
- *       RGB : rgb format or YUV420: Y'UV format
+* Function used to init the pipe used to execute the command "ffmpeg" in the terminal..
 *
 */
-void initMp4Read(enum VideoFile video_file, enum PixelFormat pix_fmt);
+void initMp4Read();
 /**
 * Function used to close the pipe initialized.
 *
@@ -142,7 +120,6 @@ void mp4DisplayRGB( int width, int height, unsigned char *r, unsigned char *g, u
 *
 */
 void mp4Display(int width, int height, unsigned char* pixels);
-void fillTab(unsigned char *dest, int width, int height,int nb_frames);
 
 /**
 * Function used to display an image of size (width*height).

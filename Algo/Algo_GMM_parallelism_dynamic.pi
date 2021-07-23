@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+    <key attr.name="parameters" for="graph" id="parameters"/>
+    <key attr.name="variables" for="graph" id="variables"/>
+    <key attr.name="arguments" for="node" id="arguments"/>
+    <key attr.name="name" attr.type="string" for="graph"/>
+    <key attr.name="graph_desc" attr.type="string" for="node"/>
+    <graph edgedefault="directed">
+        <data key="name">Algo_GMM_parallelism_dynamic</data>
+        <node id="initDone" kind="cfg_in_iface"/>
+        <node id="width" kind="cfg_in_iface"/>
+        <node id="height" kind="cfg_in_iface"/>
+        <node id="sliceHeight" kind="cfg_in_iface"/>
+        <node id="nbSlice" kind="cfg_in_iface"/>
+        <node id="component_index" kind="cfg_in_iface"/>
+        <node id="bb" kind="snk">
+            <port annotation="NONE" expr="1" kind="input" name="bb"/>
+        </node>
+        <node id="src" kind="src">
+            <port annotation="NONE" expr="1" kind="output" name="src"/>
+        </node>
+        <node id="Split_60" kind="actor">
+            <data key="graph_desc">Code/include/splitMerge.h</data>
+            <loop name="split">
+                <param direction="IN" isConfig="true"
+                    name="nbSlice" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="uchar"/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="uchar"/>
+            </loop>
+            <port kind="cfg_input" name="nbSlice"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="input" name="src"/>
+            <port annotation="NONE"
+                expr="nbSlice*3*sliceHeight*width*initDone"
+                kind="output" name="dest"/>
+        </node>
+        <node id="CvtColorHSV_61" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="cvtColorHSV">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="uchar"/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="uchar"/>
+            </loop>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="input" name="src"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="output" name="dest"/>
+        </node>
+        <node id="Likelihood_62" kind="actor">
+            <data key="graph_desc">Code/include/GMM.h</data>
+            <loop name="calculate_likelihood">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false"
+                    name="data" type="uchar"/>
+                <param direction="OUT" isConfig="false"
+                    name="likelihood" type="float"/>
+            </loop>
+            <init name="initGMM_Model">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </init>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="input" name="data"/>
+            <port annotation="NONE"
+                expr="2*height*width*initDone" kind="output" name="likelihood"/>
+        </node>
+        <node id="MaskCreation_63" kind="actor">
+            <data key="graph_desc">Code/include/GMM.h</data>
+            <loop name="createMaskGMM_model">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="component_index" type="int"/>
+                <param direction="IN" isConfig="false"
+                    name="likelihood" type="float"/>
+                <param direction="OUT" isConfig="false"
+                    name="mask" type="uchar"/>
+            </loop>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="component_index"/>
+            <port annotation="NONE"
+                expr="2*height*width*initDone" kind="input" name="likelihood"/>
+            <port annotation="NONE" expr="height*width*initDone"
+                kind="output" name="mask"/>
+        </node>
+        <node id="Merge_64" kind="actor">
+            <data key="graph_desc">Code/include/splitMerge.h</data>
+            <loop name="mergeGray">
+                <param direction="IN" isConfig="true"
+                    name="nbSlice" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="uchar"/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="uchar"/>
+            </loop>
+            <port kind="cfg_input" name="nbSlice"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE"
+                expr="nbSlice*sliceHeight*width*initDone"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="height*width*initDone"
+                kind="output" name="dest"/>
+        </node>
+        <node id="BoxConstruction_65" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="boxConstruction">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="uchar"/>
+                <param direction="OUT" isConfig="false" name="bb" type="Rectangle"/>
+            </loop>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE" expr="height*width*initDone"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="initDone" kind="output" name="bb"/>
+        </node>
+        <edge kind="fifo" source="BoxConstruction_65"
+            sourceport="bb" target="bb" targetport="bb" type="Rectangle"/>
+        <edge kind="fifo" source="Merge_64" sourceport="dest"
+            target="BoxConstruction_65" targetport="src" type="uchar"/>
+        <edge kind="fifo" source="MaskCreation_63"
+            sourceport="mask" target="Merge_64" targetport="src" type="uchar"/>
+        <edge kind="fifo" source="Likelihood_62"
+            sourceport="likelihood" target="MaskCreation_63"
+            targetport="likelihood" type="float"/>
+        <edge kind="fifo" source="CvtColorHSV_61"
+            sourceport="dest" target="Likelihood_62"
+            targetport="data" type="uchar"/>
+        <edge kind="fifo" source="Split_60" sourceport="dest"
+            target="CvtColorHSV_61" targetport="src" type="uchar"/>
+        <edge kind="fifo" source="src" sourceport="src"
+            target="Split_60" targetport="src" type="uchar"/>
+        <edge kind="dependency" source="width"
+            target="BoxConstruction_65" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="BoxConstruction_65" targetport="height"/>
+        <edge kind="dependency" source="nbSlice"
+            target="Merge_64" targetport="nbSlice"/>
+        <edge kind="dependency" source="width" target="Merge_64" targetport="width"/>
+        <edge kind="dependency" source="height" target="Merge_64" targetport="height"/>
+        <edge kind="dependency" source="width"
+            target="MaskCreation_63" targetport="width"/>
+        <edge kind="dependency" source="sliceHeight"
+            target="MaskCreation_63" targetport="height"/>
+        <edge kind="dependency" source="component_index"
+            target="MaskCreation_63" targetport="component_index"/>
+        <edge kind="dependency" source="width"
+            target="Likelihood_62" targetport="width"/>
+        <edge kind="dependency" source="sliceHeight"
+            target="Likelihood_62" targetport="height"/>
+        <edge kind="dependency" source="width"
+            target="CvtColorHSV_61" targetport="width"/>
+        <edge kind="dependency" source="sliceHeight"
+            target="CvtColorHSV_61" targetport="height"/>
+        <edge kind="dependency" source="nbSlice"
+            target="Split_60" targetport="nbSlice"/>
+        <edge kind="dependency" source="width" target="Split_60" targetport="width"/>
+        <edge kind="dependency" source="height" target="Split_60" targetport="height"/>
+    </graph>
+</graphml>
