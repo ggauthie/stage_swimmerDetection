@@ -5,7 +5,6 @@
 #include "resize.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <cstring>
 #include "math.h"
 
 void resize(unsigned char *src, unsigned char *dest, Rectangle *box, int width, int height, int width_final, int height_final)
