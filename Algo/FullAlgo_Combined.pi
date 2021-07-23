@@ -9,9 +9,6 @@
         <data key="name">test</data>
         <node expr="640" id="width" kind="param"/>
         <node expr="480" id="height" kind="param"/>
-        <node expr="0" id="pix_fmt" kind="param"/>
-        <node expr="2" id="video_file" kind="param"/>
-        <node expr="8" id="nbSlice" kind="param"/>
         <node expr="0" id="initDone" kind="param"/>
         <node expr="0" id="selectLineConstruction" kind="param"/>
         <node expr="177" id="nb_frames_init" kind="param"/>
@@ -25,16 +22,9 @@
                 <param direction="OUT" isConfig="false"
                     name="pixels" type="unsigned char "/>
             </loop>
-            <init name="initMp4Read">
-                <param direction="IN" isConfig="true"
-                    name="video_file" type="enum VideoFile"/>
-                <param direction="IN" isConfig="true"
-                    name="pix_fmt" type="enum PixelFormat"/>
-            </init>
+            <init name="initMp4Read"/>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="height"/>
-            <port kind="cfg_input" name="pix_fmt"/>
-            <port kind="cfg_input" name="video_file"/>
             <port annotation="NONE" expr="3*height*width"
                 kind="output" name="pixels"/>
         </node>
@@ -42,11 +32,10 @@
             <data key="graph_desc">Algo/Algo_GMM.pi</data>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="height"/>
-            <port kind="cfg_input" name="initDone"/>
-            <port annotation="NONE"
-                expr="3*height*width*initDone" kind="input" name="src"/>
-            <port annotation="NONE" expr="1*initDone"
-                kind="output" name="box"/>
+            <port kind="cfg_input" name="active"/>
+            <port annotation="NONE" expr="3*height*width*active"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="1*active" kind="output" name="bb"/>
         </node>
         <node id="lineDetection" kind="actor">
             <data key="graph_desc">Algo/surfaceDetection.pi</data>
@@ -60,13 +49,13 @@
         <node id="variance" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
             <loop name="variance_iter">
-                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
-                <param direction="OUT" isConfig="false"
-                    name="dest" type="unsigned char "/>
                 <param direction="IN" isConfig="true"
                     name="width" type="int"/>
                 <param direction="IN" isConfig="true"
                     name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
             </loop>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="height"/>
@@ -136,7 +125,7 @@
             <port annotation="NONE"
                 expr="3*height*width*initDone" kind="input" name="src"/>
             <port annotation="NONE" expr="1*initDone"
-                kind="output" name="box"/>
+                kind="output" name="bb"/>
         </node>
         <node id="YUV_Algo" kind="actor">
             <data key="graph_desc">Algo/Algo_YUV.pi</data>
@@ -146,11 +135,11 @@
             <port annotation="NONE"
                 expr="3*height*width*initDone" kind="input" name="src"/>
             <port annotation="NONE" expr="1*initDone"
-                kind="output" name="box"/>
+                kind="output" name="bb"/>
         </node>
         <node id="poolingDecision" kind="actor">
             <data key="graph_desc">Code/include/voteSystem.h</data>
-            <loop name="pooling">
+            <loop name="poolingIoU">
                 <param direction="IN" isConfig="false"
                     name="box1" type="Rectangle "/>
                 <param direction="IN" isConfig="false"
@@ -169,22 +158,22 @@
                 kind="input" name="box3"/>
             <port annotation="NONE" expr="initDone" kind="output" name="boxFinal"/>
         </node>
-        <node id="boxConstruction" kind="actor">
+        <node id="drawBox" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
             <loop name="drawRectangle">
-                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
-                <param direction="OUT" isConfig="false"
-                    name="dest" type="unsigned char "/>
-                <param direction="IN" isConfig="false" name="box" type="Rectangle "/>
                 <param direction="IN" isConfig="true"
                     name="width" type="int"/>
                 <param direction="IN" isConfig="true"
                     name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="IN" isConfig="false" name="bb" type="Rectangle "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
             </loop>
             <port kind="cfg_input" name="height"/>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="initDone"/>
-            <port annotation="NONE" expr="initDone" kind="input" name="box"/>
+            <port annotation="NONE" expr="initDone" kind="input" name="bb"/>
             <port annotation="NONE"
                 expr="3*height*width*initDone" kind="input" name="src"/>
             <port annotation="NONE"
@@ -229,28 +218,22 @@
             sourceport="o_2" target="HSV_Algo" targetport="src" type="unsigned char"/>
         <edge kind="fifo" source="BroadcastFrame"
             sourceport="o_4" target="YUV_Algo" targetport="src" type="unsigned char"/>
-        <edge kind="fifo" source="GMM_algo" sourceport="box"
+        <edge kind="fifo" source="GMM_algo" sourceport="bb"
             target="poolingDecision" targetport="box1" type="Rectangle"/>
-        <edge kind="fifo" source="HSV_Algo" sourceport="box"
+        <edge kind="fifo" source="HSV_Algo" sourceport="bb"
             target="poolingDecision" targetport="box2" type="Rectangle"/>
-        <edge kind="fifo" source="YUV_Algo" sourceport="box"
+        <edge kind="fifo" source="YUV_Algo" sourceport="bb"
             target="poolingDecision" targetport="box3" type="Rectangle"/>
         <edge kind="fifo" source="poolingDecision"
-            sourceport="boxFinal" target="boxConstruction"
-            targetport="box" type="Rectangle"/>
+            sourceport="boxFinal" target="drawBox"
+            targetport="bb" type="Rectangle"/>
         <edge kind="fifo" source="BroadcastFrame"
-            sourceport="o_3" target="boxConstruction"
-            targetport="src" type="unsigned char"/>
-        <edge kind="fifo" source="boxConstruction"
-            sourceport="dest" target="frameDisplay"
-            targetport="pixels" type="unsigned char"/>
+            sourceport="o_3" target="drawBox" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="drawBox" sourceport="dest"
+            target="frameDisplay" targetport="pixels" type="unsigned char"/>
         <edge kind="dependency" source="width" target="readFrame" targetport="width"/>
         <edge kind="dependency" source="height"
             target="readFrame" targetport="height"/>
-        <edge kind="dependency" source="pix_fmt"
-            target="readFrame" targetport="pix_fmt"/>
-        <edge kind="dependency" source="video_file"
-            target="readFrame" targetport="video_file"/>
         <edge kind="dependency" source="nb_frames_init"
             target="selectAlgo" targetport="nb_frames_init"/>
         <edge kind="dependency" source="width" target="variance" targetport="width"/>
@@ -272,7 +255,7 @@
         <edge kind="dependency" source="selectLineConstruction"
             target="variance" targetport="selectLineConstruction"/>
         <edge kind="dependency" source="initDone"
-            target="GMM_algo" targetport="initDone"/>
+            target="GMM_algo" targetport="active"/>
         <edge kind="dependency" source="width" target="algoPath" targetport="width"/>
         <edge kind="dependency" source="height" target="algoPath" targetport="height"/>
         <edge kind="dependency" source="initDone"
@@ -301,12 +284,10 @@
             target="YUV_Algo" targetport="initDone"/>
         <edge kind="dependency" source="initDone"
             target="poolingDecision" targetport="initDone"/>
-        <edge kind="dependency" source="height"
-            target="boxConstruction" targetport="height"/>
-        <edge kind="dependency" source="width"
-            target="boxConstruction" targetport="width"/>
+        <edge kind="dependency" source="height" target="drawBox" targetport="height"/>
+        <edge kind="dependency" source="width" target="drawBox" targetport="width"/>
         <edge kind="dependency" source="initDone"
-            target="boxConstruction" targetport="initDone"/>
+            target="drawBox" targetport="initDone"/>
         <edge kind="dependency" source="initDone"
             target="frameDisplay" targetport="initDone"/>
         <edge kind="dependency" source="height"

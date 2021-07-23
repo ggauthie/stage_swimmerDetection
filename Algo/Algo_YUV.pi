@@ -7,38 +7,36 @@
     <key attr.name="graph_desc" attr.type="string" for="node"/>
     <graph edgedefault="directed">
         <data key="name">swimmerDetection</data>
-        <node expr="3" id="nb_channels" kind="param"/>
         <node defaultValue="360" id="height" kind="cfg_in_iface"/>
         <node defaultValue="640" id="width" kind="cfg_in_iface"/>
         <node id="initDone" kind="cfg_in_iface"/>
-        <node id="boxConstruction" kind="actor">
+        <node id="boxConstructionYUV" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
             <loop name="boxConstruction">
-                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
                 <param direction="IN" isConfig="true"
                     name="width" type="int"/>
                 <param direction="IN" isConfig="true"
                     name="height" type="int"/>
-                <param direction="OUT" isConfig="false"
-                    name="box" type="Rectangle "/>
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false" name="bb" type="Rectangle "/>
             </loop>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="height"/>
             <port kind="cfg_input" name="select"/>
             <port annotation="NONE" expr="height*width*select"
                 kind="input" name="src"/>
-            <port annotation="NONE" expr="1*select" kind="output" name="box"/>
+            <port annotation="NONE" expr="1*select" kind="output" name="bb"/>
         </node>
         <node id="cvtColorYUV" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
             <loop name="cvtColorRGBtoYUV">
-                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
-                <param direction="OUT" isConfig="false"
-                    name="dest" type="unsigned char "/>
                 <param direction="IN" isConfig="true"
                     name="width" type="int"/>
                 <param direction="IN" isConfig="true"
                     name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
             </loop>
             <port kind="cfg_input" name="height"/>
             <port kind="cfg_input" name="width"/>
@@ -51,13 +49,13 @@
         <node id="maskCreation" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
             <loop name="segmentationYUV">
-                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
-                <param direction="OUT" isConfig="false"
-                    name="dest" type="unsigned char "/>
                 <param direction="IN" isConfig="true"
                     name="width" type="int"/>
                 <param direction="IN" isConfig="true"
                     name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
             </loop>
             <port kind="cfg_input" name="height"/>
             <port kind="cfg_input" name="width"/>
@@ -71,18 +69,40 @@
             <port annotation="NONE"
                 expr="3*height*width*initDone" kind="output" name="src"/>
         </node>
-        <node id="box" kind="snk">
+        <node id="boxYUV" kind="snk">
             <port annotation="NONE" expr="1*initDone"
-                kind="input" name="box"/>
+                kind="input" name="boxYUV"/>
         </node>
-        <edge kind="fifo" source="maskCreation" sourceport="dest"
-            target="boxConstruction" targetport="src" type="unsigned char"/>
+        <node id="applyMaskSurface" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="applyMaskSurface">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+            </loop>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="select"/>
+            <port annotation="NONE" expr="height*width*select"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="height*width*select"
+                kind="output" name="dest"/>
+        </node>
         <edge kind="fifo" source="cvtColorYUV" sourceport="dest"
             target="maskCreation" targetport="src" type="unsigned char"/>
-        <edge kind="fifo" source="boxConstruction"
-            sourceport="box" target="box" targetport="box" type="Rectangle"/>
+        <edge kind="fifo" source="boxConstructionYUV"
+            sourceport="bb" target="boxYUV" targetport="boxYUV" type="Rectangle"/>
         <edge kind="fifo" source="src" sourceport="src"
             target="cvtColorYUV" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="maskCreation" sourceport="dest"
+            target="applyMaskSurface" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="applyMaskSurface"
+            sourceport="dest" target="boxConstructionYUV"
+            targetport="src" type="unsigned char"/>
         <edge kind="dependency" source="width"
             target="cvtColorYUV" targetport="width"/>
         <edge kind="dependency" source="width"
@@ -90,9 +110,9 @@
         <edge kind="dependency" source="height"
             target="maskCreation" targetport="height"/>
         <edge kind="dependency" source="width"
-            target="boxConstruction" targetport="width"/>
+            target="boxConstructionYUV" targetport="width"/>
         <edge kind="dependency" source="height"
-            target="boxConstruction" targetport="height"/>
+            target="boxConstructionYUV" targetport="height"/>
         <edge kind="dependency" source="width" target="src"/>
         <edge kind="dependency" source="height" target="src"/>
         <edge kind="dependency" source="initDone"
@@ -100,10 +120,16 @@
         <edge kind="dependency" source="initDone"
             target="maskCreation" targetport="select"/>
         <edge kind="dependency" source="initDone"
-            target="boxConstruction" targetport="select"/>
+            target="boxConstructionYUV" targetport="select"/>
         <edge kind="dependency" source="initDone" target="src"/>
         <edge kind="dependency" source="height"
             target="cvtColorYUV" targetport="height"/>
-        <edge kind="dependency" source="initDone" target="box"/>
+        <edge kind="dependency" source="initDone" target="boxYUV"/>
+        <edge kind="dependency" source="width"
+            target="applyMaskSurface" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="applyMaskSurface" targetport="height"/>
+        <edge kind="dependency" source="initDone"
+            target="applyMaskSurface" targetport="select"/>
     </graph>
 </graphml>

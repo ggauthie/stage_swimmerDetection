@@ -9,12 +9,9 @@
         <data key="name">test</data>
         <node expr="640" id="width" kind="param"/>
         <node expr="480" id="height" kind="param"/>
-        <node expr="0" id="pix_fmt" kind="param"/>
-        <node expr="2" id="video_file" kind="param"/>
-        <node expr="8" id="nbSlice" kind="param"/>
         <node expr="0" id="initDone" kind="param"/>
         <node expr="0" id="selectLineConstruction" kind="param"/>
-        <node expr="117" id="nb_frames_init" kind="param"/>
+        <node expr="177" id="nb_frames_init" kind="param"/>
         <node id="readFrame" kind="actor">
             <data key="graph_desc">Code/include/mp4Read.h</data>
             <loop name="mp4Read">
@@ -25,16 +22,9 @@
                 <param direction="OUT" isConfig="false"
                     name="pixels" type="unsigned char "/>
             </loop>
-            <init name="initMp4Read">
-                <param direction="IN" isConfig="true"
-                    name="video_file" type="enum VideoFile"/>
-                <param direction="IN" isConfig="true"
-                    name="pix_fmt" type="enum PixelFormat"/>
-            </init>
+            <init name="initMp4Read"/>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="height"/>
-            <port kind="cfg_input" name="pix_fmt"/>
-            <port kind="cfg_input" name="video_file"/>
             <port annotation="NONE" expr="3*height*width"
                 kind="output" name="pixels"/>
         </node>
@@ -50,13 +40,13 @@
         <node id="variance" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
             <loop name="variance_iter">
-                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
-                <param direction="OUT" isConfig="false"
-                    name="dest" type="unsigned char "/>
                 <param direction="IN" isConfig="true"
                     name="width" type="int"/>
                 <param direction="IN" isConfig="true"
                     name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
             </loop>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="height"/>
@@ -101,7 +91,11 @@
             <port annotation="NONE"
                 expr="3*height*width*initDone" kind="output" name="o_1"/>
             <port annotation="NONE"
-                expr="3*height*width*initDone" kind="output" name="o_0"/>
+                expr="3*height*width*initDone" kind="output" name="o_2"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="output" name="o_4"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="output" name="o_3"/>
         </node>
         <node id="lineConstructionPath" kind="fork">
             <port kind="cfg_input" name="selectLineConstruction"/>
@@ -114,31 +108,42 @@
                 expr="3*height*width*selectLineConstruction"
                 kind="output" name="o_0"/>
         </node>
-        <node id="Algo_HSV" kind="actor">
+        <node id="HSV_Algo" kind="actor">
             <data key="graph_desc">Algo/Algo_HSV.pi</data>
             <port kind="cfg_input" name="height"/>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="initDone"/>
             <port annotation="NONE"
                 expr="3*height*width*initDone" kind="input" name="src"/>
-            <port annotation="NONE" expr="initDone" kind="output" name="box"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="output" name="boxHSV"/>
         </node>
-        <node id="boxConstruction" kind="actor">
+        <node id="YUV_Algo" kind="actor">
+            <data key="graph_desc">Algo/Algo_YUV.pi</data>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="initDone"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="input" name="src"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="output" name="boxYUV"/>
+        </node>
+        <node id="drawRectangle" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
             <loop name="drawRectangle">
-                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
-                <param direction="OUT" isConfig="false"
-                    name="dest" type="unsigned char "/>
-                <param direction="IN" isConfig="false" name="box" type="Rectangle "/>
                 <param direction="IN" isConfig="true"
                     name="width" type="int"/>
                 <param direction="IN" isConfig="true"
                     name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="IN" isConfig="false" name="bb" type="Rectangle "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
             </loop>
             <port kind="cfg_input" name="height"/>
-            <port kind="cfg_input" name="initDone"/>
             <port kind="cfg_input" name="width"/>
-            <port annotation="NONE" expr="initDone" kind="input" name="box"/>
+            <port kind="cfg_input" name="initDone"/>
+            <port annotation="NONE" expr="initDone" kind="input" name="bb"/>
             <port annotation="NONE"
                 expr="3*height*width*initDone" kind="input" name="src"/>
             <port annotation="NONE"
@@ -160,11 +165,58 @@
                 <param direction="IN" isConfig="true"
                     name="height" type="int"/>
             </init>
+            <port kind="cfg_input" name="initDone"/>
             <port kind="cfg_input" name="height"/>
             <port kind="cfg_input" name="width"/>
-            <port kind="cfg_input" name="initDone"/>
             <port annotation="NONE"
                 expr="3*height*width*initDone" kind="input" name="pixels"/>
+        </node>
+        <node id="Algo_GMM_Cond" kind="actor">
+            <data key="graph_desc">Algo/Algo_GMM_Cond.pi</data>
+            <port kind="cfg_input" name="initDone"/>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="input" name="box1"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="input" name="box2"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="input" name="src"/>
+            <port annotation="NONE" expr="initDone" kind="input" name="iou"/>
+            <port annotation="NONE" expr="initDone" kind="output" name="boxFinal"/>
+        </node>
+        <node id="BroadcastBox1" kind="broadcast">
+            <port kind="cfg_input" name="initDone"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="input" name="i"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="output" name="o_1"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="output" name="o_2"/>
+        </node>
+        <node id="BroadcastBox2" kind="broadcast">
+            <port kind="cfg_input" name="initDone"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="input" name="i"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="output" name="o_1"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="output" name="o_2"/>
+        </node>
+        <node id="computeIoU" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="iou">
+                <param direction="IN" isConfig="false" name="r1" type="Rectangle "/>
+                <param direction="IN" isConfig="false" name="r2" type="Rectangle "/>
+                <param direction="OUT" isConfig="false"
+                    name="iou" type="float "/>
+            </loop>
+            <port kind="cfg_input" name="initDone"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="input" name="r1"/>
+            <port annotation="NONE" expr="1*initDone"
+                kind="input" name="r2"/>
+            <port annotation="NONE" expr="initDone" kind="output" name="iou"/>
         </node>
         <edge kind="fifo" source="readFrame" sourceport="pixels"
             target="algoPath" targetport="input" type="unsigned char"/>
@@ -178,22 +230,38 @@
             sourceport="o_0" target="lineDetection"
             targetport="src" type="unsigned char"/>
         <edge kind="fifo" source="BroadcastFrame"
-            sourceport="o_1" target="Algo_HSV" targetport="src" type="unsigned char"/>
-        <edge kind="fifo" source="Algo_HSV" sourceport="box"
-            target="boxConstruction" targetport="box" type="Rectangle"/>
-        <edge kind="fifo" source="boxConstruction"
+            sourceport="o_2" target="HSV_Algo" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="BroadcastFrame"
+            sourceport="o_4" target="YUV_Algo" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="BroadcastFrame"
+            sourceport="o_3" target="drawRectangle"
+            targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="drawRectangle"
             sourceport="dest" target="frameDisplay"
             targetport="pixels" type="unsigned char"/>
+        <edge kind="fifo" source="HSV_Algo" sourceport="boxHSV"
+            target="BroadcastBox1" targetport="i" type="Rectangle"/>
+        <edge kind="fifo" source="YUV_Algo" sourceport="boxYUV"
+            target="BroadcastBox2" targetport="i" type="Rectangle"/>
         <edge kind="fifo" source="BroadcastFrame"
-            sourceport="o_0" target="boxConstruction"
+            sourceport="o_1" target="Algo_GMM_Cond"
             targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="BroadcastBox1" sourceport="o_1"
+            target="Algo_GMM_Cond" targetport="box1" type="Rectangle"/>
+        <edge kind="fifo" source="BroadcastBox2" sourceport="o_1"
+            target="Algo_GMM_Cond" targetport="box2" type="Rectangle"/>
+        <edge kind="fifo" source="BroadcastBox1" sourceport="o_2"
+            target="computeIoU" targetport="r1" type="Rectangle"/>
+        <edge kind="fifo" source="BroadcastBox2" sourceport="o_2"
+            target="computeIoU" targetport="r2" type="Rectangle"/>
+        <edge kind="fifo" source="computeIoU" sourceport="iou"
+            target="Algo_GMM_Cond" targetport="iou" type="float"/>
+        <edge kind="fifo" source="Algo_GMM_Cond"
+            sourceport="boxFinal" target="drawRectangle"
+            targetport="bb" type="Rectangle"/>
         <edge kind="dependency" source="width" target="readFrame" targetport="width"/>
         <edge kind="dependency" source="height"
             target="readFrame" targetport="height"/>
-        <edge kind="dependency" source="pix_fmt"
-            target="readFrame" targetport="pix_fmt"/>
-        <edge kind="dependency" source="video_file"
-            target="readFrame" targetport="video_file"/>
         <edge kind="dependency" source="nb_frames_init"
             target="selectAlgo" targetport="nb_frames_init"/>
         <edge kind="dependency" source="width" target="variance" targetport="width"/>
@@ -230,21 +298,37 @@
             target="lineConstructionPath" targetport="height"/>
         <edge kind="dependency" source="width"
             target="lineConstructionPath" targetport="width"/>
-        <edge kind="dependency" source="height" target="Algo_HSV" targetport="height"/>
-        <edge kind="dependency" source="width" target="Algo_HSV" targetport="width"/>
+        <edge kind="dependency" source="height" target="HSV_Algo" targetport="height"/>
+        <edge kind="dependency" source="width" target="HSV_Algo" targetport="width"/>
+        <edge kind="dependency" source="initDone"
+            target="HSV_Algo" targetport="initDone"/>
+        <edge kind="dependency" source="height" target="YUV_Algo" targetport="height"/>
+        <edge kind="dependency" source="width" target="YUV_Algo" targetport="width"/>
+        <edge kind="dependency" source="initDone"
+            target="YUV_Algo" targetport="initDone"/>
         <edge kind="dependency" source="height"
-            target="boxConstruction" targetport="height"/>
-        <edge kind="dependency" source="initDone"
-            target="Algo_HSV" targetport="initDone"/>
-        <edge kind="dependency" source="initDone"
-            target="boxConstruction" targetport="initDone"/>
+            target="drawRectangle" targetport="height"/>
         <edge kind="dependency" source="width"
-            target="boxConstruction" targetport="width"/>
+            target="drawRectangle" targetport="width"/>
+        <edge kind="dependency" source="initDone"
+            target="drawRectangle" targetport="initDone"/>
+        <edge kind="dependency" source="initDone"
+            target="frameDisplay" targetport="initDone"/>
         <edge kind="dependency" source="height"
             target="frameDisplay" targetport="height"/>
         <edge kind="dependency" source="width"
             target="frameDisplay" targetport="width"/>
         <edge kind="dependency" source="initDone"
-            target="frameDisplay" targetport="initDone"/>
+            target="computeIoU" targetport="initDone"/>
+        <edge kind="dependency" source="initDone"
+            target="Algo_GMM_Cond" targetport="initDone"/>
+        <edge kind="dependency" source="initDone"
+            target="BroadcastBox1" targetport="initDone"/>
+        <edge kind="dependency" source="initDone"
+            target="BroadcastBox2" targetport="initDone"/>
+        <edge kind="dependency" source="height"
+            target="Algo_GMM_Cond" targetport="height"/>
+        <edge kind="dependency" source="width"
+            target="Algo_GMM_Cond" targetport="width"/>
     </graph>
 </graphml>

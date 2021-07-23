@@ -14,29 +14,30 @@
         <node id="boxConstruction" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
             <loop name="boxConstruction">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
                 <param direction="IN" isConfig="true"
                     name="width" type="int"/>
                 <param direction="IN" isConfig="true"
                     name="height" type="int"/>
-                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
-                <param direction="OUT" isConfig="false" name="bb" type="Rectangle "/>
+                <param direction="OUT" isConfig="false"
+                    name="box" type="Rectangle "/>
             </loop>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="height"/>
             <port annotation="NONE" expr="height*width"
                 kind="input" name="src"/>
-            <port annotation="NONE" expr="1" kind="output" name="bb"/>
+            <port annotation="NONE" expr="1" kind="output" name="box"/>
         </node>
-        <node id="cvtColorHSV" kind="actor">
+        <node id="cvtColorYUV" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
-            <loop name="cvtColorHSV">
+            <loop name="cvtColorRGBtoYUV">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
                 <param direction="IN" isConfig="true"
                     name="width" type="int"/>
                 <param direction="IN" isConfig="true"
                     name="height" type="int"/>
-                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
-                <param direction="OUT" isConfig="false"
-                    name="dest" type="unsigned char "/>
             </loop>
             <port kind="cfg_input" name="height"/>
             <port kind="cfg_input" name="width"/>
@@ -45,16 +46,16 @@
             <port annotation="NONE" expr="3*height*width"
                 kind="output" name="dest"/>
         </node>
-        <node id="segmentationHSV" kind="actor">
+        <node id="maskCreation" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
-            <loop name="segmentationHSV">
+            <loop name="segmentationYUV">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
                 <param direction="IN" isConfig="true"
                     name="width" type="int"/>
                 <param direction="IN" isConfig="true"
                     name="height" type="int"/>
-                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
-                <param direction="OUT" isConfig="false"
-                    name="dest" type="unsigned char "/>
             </loop>
             <port kind="cfg_input" name="height"/>
             <port kind="cfg_input" name="width"/>
@@ -67,8 +68,8 @@
             <port annotation="NONE" expr="3*height*width"
                 kind="output" name="src"/>
         </node>
-        <node id="bb" kind="snk">
-            <port annotation="NONE" expr="1" kind="input" name="bb"/>
+        <node id="box" kind="snk">
+            <port annotation="NONE" expr="1" kind="input" name="box"/>
         </node>
         <node id="split" kind="actor">
             <data key="graph_desc">Code/include/splitMerge.h</data>
@@ -116,22 +117,43 @@
             <port annotation="NONE" expr="height*width"
                 kind="output" name="output"/>
         </node>
-        <edge kind="fifo" source="cvtColorHSV" sourceport="dest"
-            target="segmentationHSV" targetport="src" type="unsigned char"/>
+        <node id="applyMaskSurface" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="applyMaskSurface">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE" expr="height*width"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="height*width"
+                kind="output" name="dest"/>
+        </node>
+        <edge kind="fifo" source="cvtColorYUV" sourceport="dest"
+            target="maskCreation" targetport="src" type="unsigned char"/>
         <edge kind="fifo" source="boxConstruction"
-            sourceport="bb" target="bb" targetport="bb" type="Rectangle"/>
+            sourceport="box" target="box" targetport="box" type="Rectangle"/>
         <edge kind="fifo" source="src" sourceport="src"
             target="split" targetport="input" type="unsigned char"/>
         <edge kind="fifo" source="split" sourceport="output"
-            target="cvtColorHSV" targetport="src" type="unsigned char"/>
-        <edge kind="fifo" source="segmentationHSV"
-            sourceport="dest" target="merge" targetport="input" type="unsigned char"/>
+            target="cvtColorYUV" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="maskCreation" sourceport="dest"
+            target="merge" targetport="input" type="unsigned char"/>
         <edge kind="fifo" source="merge" sourceport="output"
-            target="boxConstruction" targetport="src" type="unsigned char"/>
+            target="applyMaskSurface" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="applyMaskSurface"
+            sourceport="dest" target="boxConstruction"
+            targetport="src" type="unsigned char"/>
         <edge kind="dependency" source="width"
-            target="cvtColorHSV" targetport="width"/>
+            target="cvtColorYUV" targetport="width"/>
         <edge kind="dependency" source="width"
-            target="segmentationHSV" targetport="width"/>
+            target="maskCreation" targetport="width"/>
         <edge kind="dependency" source="width"
             target="boxConstruction" targetport="width"/>
         <edge kind="dependency" source="height"
@@ -141,14 +163,18 @@
         <edge kind="dependency" source="height" target="sliceHeight"/>
         <edge kind="dependency" source="nbSlice" target="sliceHeight"/>
         <edge kind="dependency" source="sliceHeight"
-            target="segmentationHSV" targetport="height"/>
+            target="maskCreation" targetport="height"/>
         <edge kind="dependency" source="sliceHeight"
-            target="cvtColorHSV" targetport="height"/>
+            target="cvtColorYUV" targetport="height"/>
         <edge kind="dependency" source="width" target="merge" targetport="width"/>
         <edge kind="dependency" source="width" target="split" targetport="width"/>
         <edge kind="dependency" source="nbSlice" target="split" targetport="nbSlice"/>
         <edge kind="dependency" source="height" target="split" targetport="height"/>
         <edge kind="dependency" source="height" target="merge" targetport="height"/>
         <edge kind="dependency" source="nbSlice" target="merge" targetport="nbSlice"/>
+        <edge kind="dependency" source="width"
+            target="applyMaskSurface" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="applyMaskSurface" targetport="height"/>
     </graph>
 </graphml>

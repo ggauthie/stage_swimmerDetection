@@ -37,14 +37,14 @@
             <port annotation="NONE" expr="3*height*width"
                 kind="output" name="o_0"/>
         </node>
-        <node id="Algo_HSV" kind="actor">
-            <data key="graph_desc">Algo/Algo_HSV_parallelism.pi</data>
+        <node id="Algo_YUV" kind="actor">
+            <data key="graph_desc">Algo/Algo_YUV_parallelism.pi</data>
             <port kind="cfg_input" name="height"/>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="nbSlice"/>
             <port annotation="NONE" expr="3*height*width"
                 kind="input" name="src"/>
-            <port annotation="NONE" expr="1" kind="output" name="bb"/>
+            <port annotation="NONE" expr="1" kind="output" name="box"/>
         </node>
         <node id="boxConstruction" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
@@ -114,8 +114,8 @@
             <data key="delay">readFrame_pixels__BroadcastFrame_input</data>
         </edge>
         <edge kind="fifo" source="BroadcastFrame"
-            sourceport="o_1" target="Algo_HSV" targetport="src" type="unsigned char"/>
-        <edge kind="fifo" source="Algo_HSV" sourceport="bb"
+            sourceport="o_1" target="Algo_YUV" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="Algo_YUV" sourceport="box"
             target="boxConstruction" targetport="bb" type="Rectangle"/>
         <edge kind="fifo" source="BroadcastFrame"
             sourceport="o_0" target="boxConstruction"
@@ -127,8 +127,8 @@
             target="BroadcastFrame" targetport="width"/>
         <edge kind="dependency" source="height"
             target="BroadcastFrame" targetport="height"/>
-        <edge kind="dependency" source="height" target="Algo_HSV" targetport="height"/>
-        <edge kind="dependency" source="width" target="Algo_HSV" targetport="width"/>
+        <edge kind="dependency" source="height" target="Algo_YUV" targetport="height"/>
+        <edge kind="dependency" source="width" target="Algo_YUV" targetport="width"/>
         <edge kind="dependency" source="height"
             target="boxConstruction" targetport="height"/>
         <edge kind="dependency" source="width"
@@ -138,7 +138,7 @@
         <edge kind="dependency" source="width"
             target="frameDisplay" targetport="width"/>
         <edge kind="dependency" source="nbSlice"
-            target="Algo_HSV" targetport="nbSlice"/>
+            target="Algo_YUV" targetport="nbSlice"/>
         <edge kind="dependency" source="width" target="readFrame_pixels__BroadcastFrame_input"/>
         <edge kind="dependency" source="height" target="readFrame_pixels__BroadcastFrame_input"/>
         <edge kind="dependency" source="width" target="boxConstruction_dest__frameDisplay_pixels"/>

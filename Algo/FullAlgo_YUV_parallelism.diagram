@@ -3,7 +3,7 @@
   <properties key="editor_version" value="3"/>
   <graphicsAlgorithm xsi:type="al:Rectangle" background="//@colors.1" foreground="//@colors.0" lineWidth="1" transparency="0.0" width="1000" height="1000"/>
   <link>
-    <businessObjects href="FullAlgo_HSV_parallelism.pi#/"/>
+    <businessObjects href="FullAlgo_YUV_parallelism.pi#/"/>
   </link>
   <children xsi:type="pi:ContainerShape" visible="true" active="true">
     <graphicsAlgorithm xsi:type="al:Polygon" background="//@colors.2" foreground="//@colors.3" lineWidth="2" filled="true" transparency="0.0" width="35" height="40" x="235" y="126">
@@ -14,17 +14,17 @@
       <points y="26"/>
     </graphicsAlgorithm>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.0"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.0"/>
     </link>
     <anchors xsi:type="pi:ChopboxAnchor" outgoingConnections="//@connections.5 //@connections.7 //@connections.10 //@connections.12 //@connections.14 //@connections.16 //@connections.18">
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.0"/>
       </link>
     </anchors>
     <children visible="true">
       <graphicsAlgorithm xsi:type="al:Text" foreground="//@colors.4" lineWidth="1" filled="false" transparency="0.0" width="35" height="20" y="22" font="//@fonts.0" horizontalAlignment="ALIGNMENT_CENTER" value="width"/>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.0"/>
       </link>
     </children>
   </children>
@@ -37,17 +37,17 @@
       <points y="26"/>
     </graphicsAlgorithm>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.1"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.1"/>
     </link>
     <anchors xsi:type="pi:ChopboxAnchor" outgoingConnections="//@connections.6 //@connections.8 //@connections.9 //@connections.11 //@connections.13 //@connections.17 //@connections.19">
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.1"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.1"/>
       </link>
     </anchors>
     <children visible="true">
       <graphicsAlgorithm xsi:type="al:Text" foreground="//@colors.4" lineWidth="1" filled="false" transparency="0.0" width="40" height="20" y="22" font="//@fonts.0" horizontalAlignment="ALIGNMENT_CENTER" value="height"/>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.1"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.1"/>
       </link>
     </children>
   </children>
@@ -60,28 +60,28 @@
       <points y="26"/>
     </graphicsAlgorithm>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.2"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.2"/>
     </link>
     <anchors xsi:type="pi:ChopboxAnchor" outgoingConnections="//@connections.15">
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.2"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.2"/>
       </link>
     </anchors>
     <children visible="true">
       <graphicsAlgorithm xsi:type="al:Text" foreground="//@colors.4" lineWidth="1" filled="false" transparency="0.0" width="45" height="20" y="22" font="//@fonts.0" horizontalAlignment="ALIGNMENT_CENTER" value="nbSlice"/>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.2"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.2"/>
       </link>
     </children>
   </children>
   <children xsi:type="pi:ContainerShape" visible="true" active="true">
     <graphicsAlgorithm xsi:type="al:RoundedRectangle" background="//@colors.6" foreground="//@colors.5" lineWidth="2" transparency="0.0" width="85" height="68" x="50" y="250" cornerHeight="5" cornerWidth="5"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.3"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.3"/>
     </link>
     <anchors xsi:type="pi:ChopboxAnchor">
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.3"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.3"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.5" referencedGraphicsAlgorithm="//@children.3/@graphicsAlgorithm" relativeHeight="0.29411764705882354">
@@ -94,7 +94,7 @@
         </graphicsAlgorithmChildren>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.3/@configInputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.3/@configInputPorts.0"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.6" referencedGraphicsAlgorithm="//@children.3/@graphicsAlgorithm" relativeHeight="0.5147058823529411">
@@ -107,7 +107,7 @@
         </graphicsAlgorithmChildren>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.3/@configInputPorts.1"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.3/@configInputPorts.1"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" outgoingConnections="//@connections.21" referencedGraphicsAlgorithm="//@children.3/@graphicsAlgorithm" relativeWidth="1.0" relativeHeight="0.7352941176470589">
@@ -116,24 +116,24 @@
         <graphicsAlgorithmChildren xsi:type="al:Rectangle" background="//@colors.7" foreground="//@colors.5" lineWidth="1" lineStyle="UNSPECIFIED" width="8" height="8" x="28" y="2"/>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.3/@dataOutputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.3/@dataOutputPorts.0"/>
       </link>
     </anchors>
     <children visible="true">
       <graphicsAlgorithm xsi:type="al:Text" foreground="//@colors.4" lineWidth="1" filled="false" transparency="0.0" width="85" height="20" font="//@fonts.0" horizontalAlignment="ALIGNMENT_CENTER" value="readFrame"/>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.3"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.3"/>
       </link>
     </children>
   </children>
   <children xsi:type="pi:ContainerShape" visible="true" active="true">
     <graphicsAlgorithm xsi:type="al:RoundedRectangle" background="//@colors.8" foreground="//@colors.5" lineWidth="2" transparency="0.0" width="116" height="83" x="235" y="250" cornerHeight="5" cornerWidth="5"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.4"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.4"/>
     </link>
     <anchors xsi:type="pi:ChopboxAnchor">
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.4"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.4"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.7" referencedGraphicsAlgorithm="//@children.4/@graphicsAlgorithm" relativeHeight="0.24096385542168675">
@@ -146,7 +146,7 @@
         </graphicsAlgorithmChildren>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.4/@configInputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.4/@configInputPorts.0"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.8" referencedGraphicsAlgorithm="//@children.4/@graphicsAlgorithm" relativeHeight="0.42168674698795183">
@@ -159,7 +159,7 @@
         </graphicsAlgorithmChildren>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.4/@configInputPorts.1"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.4/@configInputPorts.1"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.1" referencedGraphicsAlgorithm="//@children.4/@graphicsAlgorithm" relativeHeight="0.6024096385542169">
@@ -168,7 +168,7 @@
         <graphicsAlgorithmChildren xsi:type="al:Rectangle" background="//@colors.9" foreground="//@colors.5" lineWidth="1" lineStyle="UNSPECIFIED" width="8" height="8" y="2"/>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.4/@dataInputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.4/@dataInputPorts.0"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" outgoingConnections="//@connections.2" referencedGraphicsAlgorithm="//@children.4/@graphicsAlgorithm" relativeWidth="1.0" relativeHeight="0.6024096385542169">
@@ -177,7 +177,7 @@
         <graphicsAlgorithmChildren xsi:type="al:Rectangle" background="//@colors.7" foreground="//@colors.5" lineWidth="1" lineStyle="UNSPECIFIED" width="8" height="8" x="20" y="2"/>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.4/@dataOutputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.4/@dataOutputPorts.0"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" outgoingConnections="//@connections.4" referencedGraphicsAlgorithm="//@children.4/@graphicsAlgorithm" relativeWidth="1.0" relativeHeight="0.7831325301204819">
@@ -186,24 +186,24 @@
         <graphicsAlgorithmChildren xsi:type="al:Rectangle" background="//@colors.7" foreground="//@colors.5" lineWidth="1" lineStyle="UNSPECIFIED" width="8" height="8" x="20" y="2"/>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.4/@dataOutputPorts.1"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.4/@dataOutputPorts.1"/>
       </link>
     </anchors>
     <children visible="true">
       <graphicsAlgorithm xsi:type="al:Text" foreground="//@colors.4" lineWidth="1" filled="false" transparency="0.0" width="116" height="20" font="//@fonts.0" horizontalAlignment="ALIGNMENT_CENTER" value="BroadcastFrame"/>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.4"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.4"/>
       </link>
     </children>
   </children>
   <children xsi:type="pi:ContainerShape" visible="true" active="true">
     <graphicsAlgorithm xsi:type="al:RoundedRectangle" background="//@colors.1" foreground="//@colors.10" lineWidth="2" transparency="0.0" width="83" height="83" x="451" y="250" cornerHeight="5" cornerWidth="5"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.5"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.5"/>
     </link>
     <anchors xsi:type="pi:ChopboxAnchor">
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.5"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.5"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.9" referencedGraphicsAlgorithm="//@children.5/@graphicsAlgorithm" relativeHeight="0.24096385542168675">
@@ -216,7 +216,7 @@
         </graphicsAlgorithmChildren>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.5/@configInputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.5/@configInputPorts.0"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.10" referencedGraphicsAlgorithm="//@children.5/@graphicsAlgorithm" relativeHeight="0.42168674698795183">
@@ -229,7 +229,7 @@
         </graphicsAlgorithmChildren>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.5/@configInputPorts.1"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.5/@configInputPorts.1"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.15" referencedGraphicsAlgorithm="//@children.5/@graphicsAlgorithm" relativeHeight="0.6024096385542169">
@@ -242,7 +242,7 @@
         </graphicsAlgorithmChildren>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.5/@configInputPorts.2"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.5/@configInputPorts.2"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.2" referencedGraphicsAlgorithm="//@children.5/@graphicsAlgorithm" relativeHeight="0.7831325301204819">
@@ -251,33 +251,33 @@
         <graphicsAlgorithmChildren xsi:type="al:Rectangle" background="//@colors.9" foreground="//@colors.5" lineWidth="1" lineStyle="UNSPECIFIED" width="8" height="8" y="2"/>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.5/@dataInputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.5/@dataInputPorts.0"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" outgoingConnections="//@connections.3" referencedGraphicsAlgorithm="//@children.5/@graphicsAlgorithm" relativeWidth="1.0" relativeHeight="0.7831325301204819">
-      <graphicsAlgorithm xsi:type="al:Rectangle" lineWidth="1" filled="false" lineVisible="false" transparency="0.0" width="22" height="13" x="-22">
-        <graphicsAlgorithmChildren xsi:type="al:Text" foreground="//@colors.4" lineWidth="1" filled="false" transparency="0.0" width="14" height="13" font="//@fonts.1" value="bb"/>
-        <graphicsAlgorithmChildren xsi:type="al:Rectangle" background="//@colors.7" foreground="//@colors.5" lineWidth="1" lineStyle="UNSPECIFIED" width="8" height="8" x="14" y="2"/>
+      <graphicsAlgorithm xsi:type="al:Rectangle" lineWidth="1" filled="false" lineVisible="false" transparency="0.0" width="27" height="13" x="-27">
+        <graphicsAlgorithmChildren xsi:type="al:Text" foreground="//@colors.4" lineWidth="1" filled="false" transparency="0.0" width="19" height="13" font="//@fonts.1" value="box"/>
+        <graphicsAlgorithmChildren xsi:type="al:Rectangle" background="//@colors.7" foreground="//@colors.5" lineWidth="1" lineStyle="UNSPECIFIED" width="8" height="8" x="19" y="2"/>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.5/@dataOutputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.5/@dataOutputPorts.0"/>
       </link>
     </anchors>
     <children visible="true">
-      <graphicsAlgorithm xsi:type="al:Text" foreground="//@colors.4" lineWidth="1" filled="false" transparency="0.0" width="83" height="20" font="//@fonts.2" horizontalAlignment="ALIGNMENT_CENTER" value="Algo_HSV"/>
+      <graphicsAlgorithm xsi:type="al:Text" foreground="//@colors.4" lineWidth="1" filled="false" transparency="0.0" width="83" height="20" font="//@fonts.2" horizontalAlignment="ALIGNMENT_CENTER" value="Algo_YUV"/>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.5"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.5"/>
       </link>
     </children>
   </children>
   <children xsi:type="pi:ContainerShape" visible="true" active="true">
     <graphicsAlgorithm xsi:type="al:RoundedRectangle" background="//@colors.6" foreground="//@colors.5" lineWidth="2" transparency="0.0" width="120" height="83" x="634" y="250" cornerHeight="5" cornerWidth="5"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.6"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.6"/>
     </link>
     <anchors xsi:type="pi:ChopboxAnchor">
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.6"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.6"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.11" referencedGraphicsAlgorithm="//@children.6/@graphicsAlgorithm" relativeHeight="0.24096385542168675">
@@ -290,7 +290,7 @@
         </graphicsAlgorithmChildren>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.6/@configInputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.6/@configInputPorts.0"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.12" referencedGraphicsAlgorithm="//@children.6/@graphicsAlgorithm" relativeHeight="0.42168674698795183">
@@ -303,7 +303,7 @@
         </graphicsAlgorithmChildren>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.6/@configInputPorts.1"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.6/@configInputPorts.1"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.3" referencedGraphicsAlgorithm="//@children.6/@graphicsAlgorithm" relativeHeight="0.6024096385542169">
@@ -312,7 +312,7 @@
         <graphicsAlgorithmChildren xsi:type="al:Rectangle" background="//@colors.9" foreground="//@colors.5" lineWidth="1" lineStyle="UNSPECIFIED" width="8" height="8" y="2"/>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.6/@dataInputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.6/@dataInputPorts.0"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.4" referencedGraphicsAlgorithm="//@children.6/@graphicsAlgorithm" relativeHeight="0.7831325301204819">
@@ -321,7 +321,7 @@
         <graphicsAlgorithmChildren xsi:type="al:Rectangle" background="//@colors.9" foreground="//@colors.5" lineWidth="1" lineStyle="UNSPECIFIED" width="8" height="8" y="2"/>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.6/@dataInputPorts.1"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.6/@dataInputPorts.1"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" outgoingConnections="//@connections.20" referencedGraphicsAlgorithm="//@children.6/@graphicsAlgorithm" relativeWidth="1.0" relativeHeight="0.6024096385542169">
@@ -330,24 +330,24 @@
         <graphicsAlgorithmChildren xsi:type="al:Rectangle" background="//@colors.7" foreground="//@colors.5" lineWidth="1" lineStyle="UNSPECIFIED" width="8" height="8" x="22" y="2"/>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.6/@dataOutputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.6/@dataOutputPorts.0"/>
       </link>
     </anchors>
     <children visible="true">
       <graphicsAlgorithm xsi:type="al:Text" foreground="//@colors.4" lineWidth="1" filled="false" transparency="0.0" width="120" height="20" font="//@fonts.0" horizontalAlignment="ALIGNMENT_CENTER" value="boxConstruction"/>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.6"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.6"/>
       </link>
     </children>
   </children>
   <children xsi:type="pi:ContainerShape" visible="true" active="true">
     <graphicsAlgorithm xsi:type="al:RoundedRectangle" background="//@colors.6" foreground="//@colors.5" lineWidth="2" transparency="0.0" width="98" height="68" x="854" y="250" cornerHeight="5" cornerWidth="5"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.7"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.7"/>
     </link>
     <anchors xsi:type="pi:ChopboxAnchor">
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.7"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.7"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.13" referencedGraphicsAlgorithm="//@children.7/@graphicsAlgorithm" relativeHeight="0.29411764705882354">
@@ -360,7 +360,7 @@
         </graphicsAlgorithmChildren>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.7/@configInputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.7/@configInputPorts.0"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.14" referencedGraphicsAlgorithm="//@children.7/@graphicsAlgorithm" relativeHeight="0.5147058823529411">
@@ -373,7 +373,7 @@
         </graphicsAlgorithmChildren>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.7/@configInputPorts.1"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.7/@configInputPorts.1"/>
       </link>
     </anchors>
     <anchors xsi:type="pi:BoxRelativeAnchor" visible="true" active="true" incomingConnections="//@connections.0" referencedGraphicsAlgorithm="//@children.7/@graphicsAlgorithm" relativeHeight="0.7352941176470589">
@@ -382,42 +382,42 @@
         <graphicsAlgorithmChildren xsi:type="al:Rectangle" background="//@colors.9" foreground="//@colors.5" lineWidth="1" lineStyle="UNSPECIFIED" width="8" height="8" y="2"/>
       </graphicsAlgorithm>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.7/@dataInputPorts.0"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.7/@dataInputPorts.0"/>
       </link>
     </anchors>
     <children visible="true">
       <graphicsAlgorithm xsi:type="al:Text" foreground="//@colors.4" lineWidth="1" filled="false" transparency="0.0" width="98" height="20" font="//@fonts.0" horizontalAlignment="ALIGNMENT_CENTER" value="frameDisplay"/>
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.7"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.7"/>
       </link>
     </children>
   </children>
   <children xsi:type="pi:ContainerShape" visible="true" active="true">
     <graphicsAlgorithm xsi:type="al:Ellipse" background="//@colors.5" foreground="//@colors.5" lineWidth="1" lineVisible="false" transparency="0.0" width="16" height="16" x="796" y="297"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.10"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.10"/>
     </link>
     <anchors xsi:type="pi:ChopboxAnchor" outgoingConnections="//@connections.0" incomingConnections="//@connections.18 //@connections.19 //@connections.20" referencedGraphicsAlgorithm="//@children.8/@graphicsAlgorithm">
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.10"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.10"/>
       </link>
     </anchors>
   </children>
   <children xsi:type="pi:ContainerShape" visible="true" active="true">
     <graphicsAlgorithm xsi:type="al:Ellipse" background="//@colors.5" foreground="//@colors.5" lineWidth="1" lineVisible="false" transparency="0.0" width="16" height="16" x="177" y="297"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.8"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.8"/>
     </link>
     <anchors xsi:type="pi:ChopboxAnchor" outgoingConnections="//@connections.1" incomingConnections="//@connections.16 //@connections.17 //@connections.21" referencedGraphicsAlgorithm="//@children.9/@graphicsAlgorithm">
       <link>
-        <businessObjects href="FullAlgo_HSV_parallelism.pi#//@vertices.8"/>
+        <businessObjects href="FullAlgo_YUV_parallelism.pi#//@vertices.8"/>
       </link>
     </anchors>
   </children>
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.8/@anchors.0" end="//@children.7/@anchors.3">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.5" lineWidth="2" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.0"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.0"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polygon" background="//@colors.5" foreground="//@colors.5" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -431,7 +431,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.9/@anchors.0" end="//@children.4/@anchors.3">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.5" lineWidth="2" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.1"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.1"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polygon" background="//@colors.5" foreground="//@colors.5" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -445,7 +445,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.4/@anchors.4" end="//@children.5/@anchors.4">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.5" lineWidth="2" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.2"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.2"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polygon" background="//@colors.5" foreground="//@colors.5" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -460,7 +460,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.5/@anchors.5" end="//@children.6/@anchors.3">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.5" lineWidth="2" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.3"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.3"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polygon" background="//@colors.5" foreground="//@colors.5" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -475,7 +475,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.4/@anchors.5" end="//@children.6/@anchors.4">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.5" lineWidth="2" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.4"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.4"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polygon" background="//@colors.5" foreground="//@colors.5" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -492,7 +492,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.0/@anchors.0" end="//@children.3/@anchors.1">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.5"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.5"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -508,7 +508,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.1/@anchors.0" end="//@children.3/@anchors.2">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.6"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.6"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -524,7 +524,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.0/@anchors.0" end="//@children.4/@anchors.1">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.7"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.7"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -540,7 +540,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.1/@anchors.0" end="//@children.4/@anchors.2">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.8"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.8"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -556,7 +556,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.1/@anchors.0" end="//@children.5/@anchors.1">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.9"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.9"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -572,7 +572,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.0/@anchors.0" end="//@children.5/@anchors.2">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.10"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.10"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -588,7 +588,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.1/@anchors.0" end="//@children.6/@anchors.1">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.11"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.11"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -604,7 +604,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.0/@anchors.0" end="//@children.6/@anchors.2">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.12"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.12"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -620,7 +620,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.1/@anchors.0" end="//@children.7/@anchors.1">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.13"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.13"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -636,7 +636,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.0/@anchors.0" end="//@children.7/@anchors.2">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.14"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.14"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -652,7 +652,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.2/@anchors.0" end="//@children.5/@anchors.3">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.15"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.15"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -668,7 +668,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.0/@anchors.0" end="//@children.9/@anchors.0">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.16"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.16"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -684,7 +684,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.1/@anchors.0" end="//@children.9/@anchors.0">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.17"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.17"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -700,7 +700,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.0/@anchors.0" end="//@children.8/@anchors.0">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.18"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.18"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -716,7 +716,7 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.1/@anchors.0" end="//@children.8/@anchors.0">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="DASH" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.19"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.19"/>
     </link>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.3" lineWidth="2" lineStyle="UNSPECIFIED">
@@ -732,14 +732,14 @@
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.6/@anchors.5" end="//@children.8/@anchors.0">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.5" lineWidth="2" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.0"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.0"/>
     </link>
     <bendpoints x="774" y="305"/>
   </connections>
   <connections xsi:type="pi:FreeFormConnection" visible="true" active="true" start="//@children.3/@anchors.3" end="//@children.9/@anchors.0">
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.5" lineWidth="2" filled="false" transparency="0.0"/>
     <link>
-      <businessObjects href="FullAlgo_HSV_parallelism.pi#//@edges.1"/>
+      <businessObjects href="FullAlgo_YUV_parallelism.pi#//@edges.1"/>
     </link>
     <bendpoints x="155" y="305"/>
   </connections>

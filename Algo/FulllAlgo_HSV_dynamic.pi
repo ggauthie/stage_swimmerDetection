@@ -9,10 +9,12 @@
         <data key="name">test</data>
         <node expr="640" id="width" kind="param"/>
         <node expr="480" id="height" kind="param"/>
+        <node expr="0" id="pix_fmt" kind="param"/>
+        <node expr="2" id="video_file" kind="param"/>
         <node expr="8" id="nbSlice" kind="param"/>
         <node expr="0" id="initDone" kind="param"/>
         <node expr="0" id="selectLineConstruction" kind="param"/>
-        <node expr="177" id="nb_frames_init" kind="param"/>
+        <node expr="117" id="nb_frames_init" kind="param"/>
         <node id="readFrame" kind="actor">
             <data key="graph_desc">Code/include/mp4Read.h</data>
             <loop name="mp4Read">
@@ -23,9 +25,16 @@
                 <param direction="OUT" isConfig="false"
                     name="pixels" type="unsigned char "/>
             </loop>
-            <init name="initMp4Read"/>
+            <init name="initMp4Read">
+                <param direction="IN" isConfig="true"
+                    name="video_file" type="enum VideoFile"/>
+                <param direction="IN" isConfig="true"
+                    name="pix_fmt" type="enum PixelFormat"/>
+            </init>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="pix_fmt"/>
+            <port kind="cfg_input" name="video_file"/>
             <port annotation="NONE" expr="3*height*width"
                 kind="output" name="pixels"/>
         </node>
@@ -105,14 +114,14 @@
                 expr="3*height*width*selectLineConstruction"
                 kind="output" name="o_0"/>
         </node>
-        <node id="Algo_GMM" kind="actor">
-            <data key="graph_desc">Algo/Algo_GMM.pi</data>
+        <node id="Algo_HSV" kind="actor">
+            <data key="graph_desc">Algo/Algo_HSV.pi</data>
             <port kind="cfg_input" name="height"/>
             <port kind="cfg_input" name="width"/>
             <port kind="cfg_input" name="initDone"/>
             <port annotation="NONE"
                 expr="3*height*width*initDone" kind="input" name="src"/>
-            <port annotation="NONE" expr="initDone" kind="output" name="box"/>
+            <port annotation="NONE" expr="initDone" kind="output" name="boxHSV"/>
         </node>
         <node id="boxConstruction" kind="actor">
             <data key="graph_desc">Code/include/ImageWrapper.h</data>
@@ -169,8 +178,8 @@
             sourceport="o_0" target="lineDetection"
             targetport="src" type="unsigned char"/>
         <edge kind="fifo" source="BroadcastFrame"
-            sourceport="o_1" target="Algo_GMM" targetport="src" type="unsigned char"/>
-        <edge kind="fifo" source="Algo_GMM" sourceport="box"
+            sourceport="o_1" target="Algo_HSV" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="Algo_HSV" sourceport="boxHSV"
             target="boxConstruction" targetport="box" type="Rectangle"/>
         <edge kind="fifo" source="boxConstruction"
             sourceport="dest" target="frameDisplay"
@@ -181,6 +190,10 @@
         <edge kind="dependency" source="width" target="readFrame" targetport="width"/>
         <edge kind="dependency" source="height"
             target="readFrame" targetport="height"/>
+        <edge kind="dependency" source="pix_fmt"
+            target="readFrame" targetport="pix_fmt"/>
+        <edge kind="dependency" source="video_file"
+            target="readFrame" targetport="video_file"/>
         <edge kind="dependency" source="nb_frames_init"
             target="selectAlgo" targetport="nb_frames_init"/>
         <edge kind="dependency" source="width" target="variance" targetport="width"/>
@@ -217,12 +230,12 @@
             target="lineConstructionPath" targetport="height"/>
         <edge kind="dependency" source="width"
             target="lineConstructionPath" targetport="width"/>
-        <edge kind="dependency" source="height" target="Algo_GMM" targetport="height"/>
-        <edge kind="dependency" source="width" target="Algo_GMM" targetport="width"/>
+        <edge kind="dependency" source="height" target="Algo_HSV" targetport="height"/>
+        <edge kind="dependency" source="width" target="Algo_HSV" targetport="width"/>
         <edge kind="dependency" source="height"
             target="boxConstruction" targetport="height"/>
         <edge kind="dependency" source="initDone"
-            target="Algo_GMM" targetport="initDone"/>
+            target="Algo_HSV" targetport="initDone"/>
         <edge kind="dependency" source="initDone"
             target="boxConstruction" targetport="initDone"/>
         <edge kind="dependency" source="width"

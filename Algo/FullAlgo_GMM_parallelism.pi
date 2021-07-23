@@ -7,11 +7,12 @@
     <key attr.name="graph_desc" attr.type="string" for="node"/>
     <key attr.name="delay" attr.type="string" for="edge"/>
     <graph edgedefault="directed">
-        <data key="name">test</data>
-        <node expr="640" id="width" kind="param"/>
+        <data key="name">simpleSwimmerDetectionV1</data>
         <node expr="480" id="height" kind="param"/>
-        <node expr="8" id="nbSlice" kind="param"/>
-        <node id="readFrame" kind="actor">
+        <node expr="640" id="width" kind="param"/>
+        <node expr="4" id="nbSlice" kind="param"/>
+        <node expr="1" id="initDone" kind="param"/>
+        <node id="mp4Read" kind="actor">
             <data key="graph_desc">Code/include/mp4Read.h</data>
             <loop name="mp4Read">
                 <param direction="IN" isConfig="true"
@@ -27,46 +28,7 @@
             <port annotation="NONE" expr="3*height*width"
                 kind="output" name="pixels"/>
         </node>
-        <node id="BroadcastFrame" kind="broadcast">
-            <port kind="cfg_input" name="width"/>
-            <port kind="cfg_input" name="height"/>
-            <port annotation="NONE" expr="3*height*width"
-                kind="input" name="input"/>
-            <port annotation="NONE" expr="3*height*width"
-                kind="output" name="o_1"/>
-            <port annotation="NONE" expr="3*height*width"
-                kind="output" name="o_0"/>
-        </node>
-        <node id="Algo_HSV" kind="actor">
-            <data key="graph_desc">Algo/Algo_HSV_parallelism.pi</data>
-            <port kind="cfg_input" name="height"/>
-            <port kind="cfg_input" name="width"/>
-            <port kind="cfg_input" name="nbSlice"/>
-            <port annotation="NONE" expr="3*height*width"
-                kind="input" name="src"/>
-            <port annotation="NONE" expr="1" kind="output" name="bb"/>
-        </node>
-        <node id="boxConstruction" kind="actor">
-            <data key="graph_desc">Code/include/ImageWrapper.h</data>
-            <loop name="drawRectangle">
-                <param direction="IN" isConfig="true"
-                    name="width" type="int"/>
-                <param direction="IN" isConfig="true"
-                    name="height" type="int"/>
-                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
-                <param direction="IN" isConfig="false" name="bb" type="Rectangle "/>
-                <param direction="OUT" isConfig="false"
-                    name="dest" type="unsigned char "/>
-            </loop>
-            <port kind="cfg_input" name="height"/>
-            <port kind="cfg_input" name="width"/>
-            <port annotation="NONE" expr="1" kind="input" name="bb"/>
-            <port annotation="NONE" expr="3*height*width"
-                kind="input" name="src"/>
-            <port annotation="NONE" expr="3*height*width"
-                kind="output" name="dest"/>
-        </node>
-        <node id="frameDisplay" kind="actor">
+        <node id="mp4display" kind="actor">
             <data key="graph_desc">Code/include/mp4Read.h</data>
             <loop name="mp4Display">
                 <param direction="IN" isConfig="true"
@@ -87,8 +49,48 @@
             <port annotation="NONE" expr="3*height*width"
                 kind="input" name="pixels"/>
         </node>
+        <node id="BroadcastFrame" kind="broadcast">
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="height"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="input" name="input"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="output" name="o_0"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="output" name="o_1"/>
+        </node>
+        <node id="Algo_GMM" kind="actor">
+            <data key="graph_desc">Algo/Algo_GMM_parallelism.pi</data>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="nbSlice"/>
+            <port kind="cfg_input" name="initDone"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="1" kind="output" name="bb"/>
+        </node>
+        <node id="boxConstruction" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="drawRectangle">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="IN" isConfig="false" name="bb" type="Rectangle "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+            </loop>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="input" name="src"/>
+            <port annotation="NONE" expr="1" kind="input" name="bb"/>
+            <port annotation="NONE" expr="3*height*width"
+                kind="output" name="dest"/>
+        </node>
         <node expr="3*height*width" getter=""
-            id="readFrame_pixels__BroadcastFrame_input"
+            id="boxConstruction_dest__mp4display_pixels"
             kind="delay" level="permanent" setter="">
             <port annotation="NONE" expr="3*height*width"
                 kind="input" name="set"/>
@@ -96,52 +98,53 @@
                 kind="output" name="get"/>
         </node>
         <node expr="3*height*width" getter=""
-            id="boxConstruction_dest__frameDisplay_pixels"
+            id="mp4Read_pixels__BroadcastFrame_input"
             kind="delay" level="permanent" setter="">
             <port annotation="NONE" expr="3*height*width"
                 kind="input" name="set"/>
             <port annotation="NONE" expr="3*height*width"
                 kind="output" name="get"/>
         </node>
+        <edge expr="3*height*width" kind="fifo" source="mp4Read"
+            sourceport="pixels" target="BroadcastFrame"
+            targetport="input" type="unsigned char">
+            <data key="delay">mp4Read_pixels__BroadcastFrame_input</data>
+        </edge>
         <edge expr="3*height*width" kind="fifo"
             source="boxConstruction" sourceport="dest"
-            target="frameDisplay" targetport="pixels" type="unsigned char">
-            <data key="delay">boxConstruction_dest__frameDisplay_pixels</data>
-        </edge>
-        <edge expr="3*height*width" kind="fifo"
-            source="readFrame" sourceport="pixels"
-            target="BroadcastFrame" targetport="input" type="unsigned char">
-            <data key="delay">readFrame_pixels__BroadcastFrame_input</data>
+            target="mp4display" targetport="pixels" type="unsigned char">
+            <data key="delay">boxConstruction_dest__mp4display_pixels</data>
         </edge>
         <edge kind="fifo" source="BroadcastFrame"
-            sourceport="o_1" target="Algo_HSV" targetport="src" type="unsigned char"/>
-        <edge kind="fifo" source="Algo_HSV" sourceport="bb"
-            target="boxConstruction" targetport="bb" type="Rectangle"/>
+            sourceport="o_0" target="Algo_GMM" targetport="src" type="unsigned char"/>
         <edge kind="fifo" source="BroadcastFrame"
-            sourceport="o_0" target="boxConstruction"
+            sourceport="o_1" target="boxConstruction"
             targetport="src" type="unsigned char"/>
-        <edge kind="dependency" source="width" target="readFrame" targetport="width"/>
-        <edge kind="dependency" source="height"
-            target="readFrame" targetport="height"/>
+        <edge kind="fifo" source="Algo_GMM" sourceport="bb"
+            target="boxConstruction" targetport="bb" type="Rectangle"/>
+        <edge kind="dependency" source="width" target="mp4Read" targetport="width"/>
+        <edge kind="dependency" source="height" target="mp4Read" targetport="height"/>
         <edge kind="dependency" source="width"
             target="BroadcastFrame" targetport="width"/>
         <edge kind="dependency" source="height"
             target="BroadcastFrame" targetport="height"/>
-        <edge kind="dependency" source="height" target="Algo_HSV" targetport="height"/>
-        <edge kind="dependency" source="width" target="Algo_HSV" targetport="width"/>
+        <edge kind="dependency" source="height" target="Algo_GMM" targetport="height"/>
+        <edge kind="dependency" source="width" target="Algo_GMM" targetport="width"/>
         <edge kind="dependency" source="height"
             target="boxConstruction" targetport="height"/>
         <edge kind="dependency" source="width"
             target="boxConstruction" targetport="width"/>
-        <edge kind="dependency" source="height"
-            target="frameDisplay" targetport="height"/>
-        <edge kind="dependency" source="width"
-            target="frameDisplay" targetport="width"/>
         <edge kind="dependency" source="nbSlice"
-            target="Algo_HSV" targetport="nbSlice"/>
-        <edge kind="dependency" source="width" target="readFrame_pixels__BroadcastFrame_input"/>
-        <edge kind="dependency" source="height" target="readFrame_pixels__BroadcastFrame_input"/>
-        <edge kind="dependency" source="width" target="boxConstruction_dest__frameDisplay_pixels"/>
-        <edge kind="dependency" source="height" target="boxConstruction_dest__frameDisplay_pixels"/>
+            target="Algo_GMM" targetport="nbSlice"/>
+        <edge kind="dependency" source="width"
+            target="mp4display" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="mp4display" targetport="height"/>
+        <edge kind="dependency" source="width" target="boxConstruction_dest__mp4display_pixels"/>
+        <edge kind="dependency" source="height" target="boxConstruction_dest__mp4display_pixels"/>
+        <edge kind="dependency" source="width" target="mp4Read_pixels__BroadcastFrame_input"/>
+        <edge kind="dependency" source="height" target="mp4Read_pixels__BroadcastFrame_input"/>
+        <edge kind="dependency" source="initDone"
+            target="Algo_GMM" targetport="initDone"/>
     </graph>
 </graphml>

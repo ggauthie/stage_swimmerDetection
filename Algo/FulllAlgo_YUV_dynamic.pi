@@ -14,7 +14,7 @@
         <node expr="8" id="nbSlice" kind="param"/>
         <node expr="0" id="initDone" kind="param"/>
         <node expr="0" id="selectLineConstruction" kind="param"/>
-        <node expr="100" id="nb_frames_init" kind="param"/>
+        <node expr="177" id="nb_frames_init" kind="param"/>
         <node id="readFrame" kind="actor">
             <data key="graph_desc">Code/include/mp4Read.h</data>
             <loop name="mp4Read">
@@ -37,17 +37,6 @@
             <port kind="cfg_input" name="video_file"/>
             <port annotation="NONE" expr="3*height*width"
                 kind="output" name="pixels"/>
-        </node>
-        <node id="swimmerDetection" kind="actor">
-            <data key="graph_desc">Algo/swimmerDetection2.pi</data>
-            <port kind="cfg_input" name="nbSlice"/>
-            <port kind="cfg_input" name="width"/>
-            <port kind="cfg_input" name="height"/>
-            <port kind="cfg_input" name="initDone"/>
-            <port annotation="NONE"
-                expr="3*height*width*initDone" kind="input" name="src"/>
-            <port annotation="NONE"
-                expr="3*height*width*initDone" kind="input" name="image"/>
         </node>
         <node id="lineDetection" kind="actor">
             <data key="graph_desc">Algo/surfaceDetection.pi</data>
@@ -125,22 +114,78 @@
                 expr="3*height*width*selectLineConstruction"
                 kind="output" name="o_0"/>
         </node>
+        <node id="Algo_YUV" kind="actor">
+            <data key="graph_desc">Algo/Algo_YUV.pi</data>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="initDone"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="input" name="src"/>
+            <port annotation="NONE" expr="initDone" kind="output" name="boxYUV"/>
+        </node>
+        <node id="boxConstruction" kind="actor">
+            <data key="graph_desc">Code/include/ImageWrapper.h</data>
+            <loop name="drawRectangle">
+                <param direction="IN" isConfig="false" name="src" type="unsigned char "/>
+                <param direction="OUT" isConfig="false"
+                    name="dest" type="unsigned char "/>
+                <param direction="IN" isConfig="false" name="box" type="Rectangle "/>
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </loop>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="initDone"/>
+            <port kind="cfg_input" name="width"/>
+            <port annotation="NONE" expr="initDone" kind="input" name="box"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="input" name="src"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="output" name="dest"/>
+        </node>
+        <node id="frameDisplay" kind="actor">
+            <data key="graph_desc">Code/include/mp4Read.h</data>
+            <loop name="mp4Display">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+                <param direction="IN" isConfig="false"
+                    name="pixels" type="unsigned char "/>
+            </loop>
+            <init name="initMp4Display">
+                <param direction="IN" isConfig="true"
+                    name="width" type="int"/>
+                <param direction="IN" isConfig="true"
+                    name="height" type="int"/>
+            </init>
+            <port kind="cfg_input" name="height"/>
+            <port kind="cfg_input" name="width"/>
+            <port kind="cfg_input" name="initDone"/>
+            <port annotation="NONE"
+                expr="3*height*width*initDone" kind="input" name="pixels"/>
+        </node>
         <edge kind="fifo" source="readFrame" sourceport="pixels"
             target="algoPath" targetport="input" type="unsigned char"/>
         <edge kind="fifo" source="algoPath" sourceport="o_1"
             target="variance" targetport="src" type="unsigned char"/>
         <edge kind="fifo" source="algoPath" sourceport="o_0"
             target="BroadcastFrame" targetport="input" type="unsigned char"/>
-        <edge kind="fifo" source="BroadcastFrame"
-            sourceport="o_1" target="swimmerDetection"
-            targetport="src" type="unsigned char"/>
-        <edge kind="fifo" source="BroadcastFrame"
-            sourceport="o_0" target="swimmerDetection"
-            targetport="image" type="unsigned char"/>
         <edge kind="fifo" source="variance" sourceport="dest"
             target="lineConstructionPath" targetport="input" type="unsigned char"/>
         <edge kind="fifo" source="lineConstructionPath"
             sourceport="o_0" target="lineDetection"
+            targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="BroadcastFrame"
+            sourceport="o_1" target="Algo_YUV" targetport="src" type="unsigned char"/>
+        <edge kind="fifo" source="Algo_YUV" sourceport="boxYUV"
+            target="boxConstruction" targetport="box" type="Rectangle"/>
+        <edge kind="fifo" source="boxConstruction"
+            sourceport="dest" target="frameDisplay"
+            targetport="pixels" type="unsigned char"/>
+        <edge kind="fifo" source="BroadcastFrame"
+            sourceport="o_0" target="boxConstruction"
             targetport="src" type="unsigned char"/>
         <edge kind="dependency" source="width" target="readFrame" targetport="width"/>
         <edge kind="dependency" source="height"
@@ -157,12 +202,6 @@
             target="lineDetection" targetport="height"/>
         <edge kind="dependency" source="width"
             target="lineDetection" targetport="width"/>
-        <edge kind="dependency" source="nbSlice"
-            target="swimmerDetection" targetport="nbSlice"/>
-        <edge kind="dependency" source="width"
-            target="swimmerDetection" targetport="width"/>
-        <edge kind="dependency" source="height"
-            target="swimmerDetection" targetport="height"/>
         <edge kind="dependency" source="selectAlgo"
             sourceport="initDone" target="initDone"/>
         <edge kind="dependency" source="selectAlgo"
@@ -173,8 +212,6 @@
             target="variance" targetport="initDone"/>
         <edge kind="dependency" source="selectLineConstruction"
             target="variance" targetport="selectLineConstruction"/>
-        <edge kind="dependency" source="initDone"
-            target="swimmerDetection" targetport="initDone"/>
         <edge kind="dependency" source="width" target="algoPath" targetport="width"/>
         <edge kind="dependency" source="height" target="algoPath" targetport="height"/>
         <edge kind="dependency" source="initDone"
@@ -193,5 +230,21 @@
             target="lineConstructionPath" targetport="height"/>
         <edge kind="dependency" source="width"
             target="lineConstructionPath" targetport="width"/>
+        <edge kind="dependency" source="height" target="Algo_YUV" targetport="height"/>
+        <edge kind="dependency" source="width" target="Algo_YUV" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="boxConstruction" targetport="height"/>
+        <edge kind="dependency" source="initDone"
+            target="Algo_YUV" targetport="initDone"/>
+        <edge kind="dependency" source="initDone"
+            target="boxConstruction" targetport="initDone"/>
+        <edge kind="dependency" source="width"
+            target="boxConstruction" targetport="width"/>
+        <edge kind="dependency" source="height"
+            target="frameDisplay" targetport="height"/>
+        <edge kind="dependency" source="width"
+            target="frameDisplay" targetport="width"/>
+        <edge kind="dependency" source="initDone"
+            target="frameDisplay" targetport="initDone"/>
     </graph>
 </graphml>
