@@ -11,16 +11,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define FPS_MEAN 49
+#define FPS_MEAN 1
 
 static FILE *pipein;
 
-static int id_frame = 0;
+static int id_frame = 1;
 
 static const char* url = "../data/Nage_Chrono_SV_1080_60fps_Cam1_cut_rescale.MP4";
 static const char* urlLineDetection = "../data/Testset/background/rescale_T1.mp4";
 static const char* urlFullVideo = "../data/images/Testset/video2/video_2.mp4";
 
+static float fps_moy = 0;
 typedef struct RGBDisplay
 {
     SDL_Texture* texture;
@@ -248,9 +249,11 @@ void mp4Display(int width, int height, unsigned char *pixels)
     int time = stopTiming(display.stampId + 1);
     sprintf(fps_text, "FPS: %.2f", 1. / (time / 1000000. / FPS_MEAN));
     printf(" FPS : %f\n", 1. / (time / 1000000. / FPS_MEAN));
+    fps_moy += 1. / (time / 1000000. / FPS_MEAN);
+
     startTiming(display.stampId + 1);
     display.stampId = (display.stampId + 1) % FPS_MEAN;
-
+    printf(" FPS MOYEN : %f\n", fps_moy/(++id_frame));
     SDL_Surface* fpsText = TTF_RenderText_Blended(display.text_font, fps_text, colorWhite);
     SDL_Texture* fpsTexture = SDL_CreateTextureFromSurface(display.renderer, fpsText);
 
@@ -258,22 +261,14 @@ void mp4Display(int width, int height, unsigned char *pixels)
     SDL_QueryTexture(fpsTexture, NULL, NULL, &fpsWidth, &fpsHeight);
     SDL_Rect fpsTextRect;
 
-    //Draw IOU text
-    char iou_text[20] = "IOU : 0.87";
-
-    SDL_Surface* iouText = TTF_RenderText_Blended(display.text_font, fps_text, colorWhite);
-    SDL_Texture* iouTexture = SDL_CreateTextureFromSurface(display.renderer, fpsText);
-
-    SDL_QueryTexture(fpsTexture, NULL, NULL, &fpsWidth, &fpsHeight);
-
     fpsTextRect.x = width/2;
     fpsTextRect.y = 0;
     fpsTextRect.w = fpsWidth;
     fpsTextRect.h = fpsHeight;
-    SDL_RenderCopy(display.renderer, iouTexture, NULL, &fpsTextRect);
+    SDL_RenderCopy(display.renderer, fpsTexture, NULL, &fpsTextRect);
 
-    SDL_FreeSurface(iouText);
-    SDL_DestroyTexture(iouTexture);
+    SDL_FreeSurface(fpsText);
+    SDL_DestroyTexture(fpsTexture);
 
     SDL_RenderPresent(display.renderer);
 
@@ -341,23 +336,6 @@ void mp4DisplayWB(int width, int height, unsigned char* pixels)
 
     SDL_FreeSurface(fpsText);
     SDL_DestroyTexture(fpsTexture);
-
-    //Draw IOU text
-    char iou_text[20] = "IOU : 0.87"; // à redéfinir
-
-    SDL_Surface* iouText = TTF_RenderText_Blended(display.text_font, iou_text, colorWhite);
-    SDL_Texture* iouTexture = SDL_CreateTextureFromSurface(display.renderer, iouText);
-
-    SDL_QueryTexture(fpsTexture, NULL, NULL, &fpsWidth, &fpsHeight);
-
-    fpsTextRect.x = width/2;
-    fpsTextRect.y = 0;
-    fpsTextRect.w = fpsWidth;
-    fpsTextRect.h = fpsHeight;
-    SDL_RenderCopy(display.renderer, iouTexture, NULL, &fpsTextRect);
-
-    SDL_FreeSurface(iouText);
-    SDL_DestroyTexture(iouTexture);
 
     SDL_RenderPresent(display.renderer);
 }
