@@ -9,7 +9,7 @@
 #include <fstream>
 #include "string.h"
 
-#define NB_FRAMES 121
+#define NB_FRAMES_SWIMMER 187
 
 using namespace std;
 
@@ -153,6 +153,9 @@ void segmentationHSV_cpp(unsigned char *src, unsigned char *dest, int width, int
 
     //Fill the dest array
     memcpy(dest, mask_hsv.data, height*width);
+
+    /*imshow("SegHSV", mask_hsv);
+    waitKey(0);*/
 }
 
 void segmentationYUV_cpp(unsigned char *src, unsigned char *dest, int width, int height)
@@ -165,6 +168,9 @@ void segmentationYUV_cpp(unsigned char *src, unsigned char *dest, int width, int
 
     //fill the dest array
     memcpy(dest, mask_yuv.data, height*width);
+
+    /*imshow("SegYUV", mask_yuv);
+    waitKey(0);*/
 }
 
 
@@ -191,24 +197,16 @@ void boxConstruction_cpp(unsigned char* src, int width, int height, Rectangle* b
     Mat img_src(height,width, CV_8UC1, src);
     Rect rect_in(0,0,0,0);
 
-   findContours(img_src, contours, RETR_LIST, CHAIN_APPROX_SIMPLE);
-   //drawContours(img_src, contours,  -1,  Scalar(255,255,255),2);
+    findContours(img_src, contours, RETR_LIST, CHAIN_APPROX_SIMPLE);
+    //drawContours(img_src, contours,  -1,  Scalar(255,255,255),2);
 
-      /*for( auto i = 0; i < contours.size(); i++ )
-      {
-          auto rect = boundingRect( contours[i] );
-          if(contourArea(contours[i]) > 500 && rect.height > 5 && contourArea(contours[i])<150000)
-          {
-              rect_in = Rect(rect);
-          }
-      }*/
     vector<Rect> rects;
     Rect bestRect = Rect(0,0,0,0);
 
     for (auto & cnt : contours)
     {
         auto rect1 = boundingRect(cnt);
-        rectangle(img_src,rect1, Scalar(255,255,255), 2);
+        //rectangle(img_src,rect1, Scalar(255,255,255), 2);
         if (contourArea(cnt) > 800)
         {
             bool find = false;
@@ -223,7 +221,6 @@ void boxConstruction_cpp(unsigned char* src, int width, int height, Rectangle* b
                     find = true;
                 }
             }
-            //rectangle(img_src, rect1, Scalar(0,255,0),2);
             if (!find)
                 rects.push_back(rect1);
         }
@@ -236,6 +233,9 @@ void boxConstruction_cpp(unsigned char* src, int width, int height, Rectangle* b
             bestRect = tempMin;
         }
     }
+    /*rectangle(img_src, bestRect, Scalar(255,255,255),5);
+    imshow("Rectangle", img_src);
+    waitKey(0);*/
     //cv::Rect to Rectangle
     box->x = bestRect.x;
     box->y = bestRect.y;
@@ -426,9 +426,9 @@ void drawRectangle_cpp(unsigned char *src, unsigned char *dest, Rectangle *box, 
             0.75,
             CV_RGB(0, 255, 255), //font color
             2);
-    if(id_frame == 187)
+    if(id_frame == NB_FRAMES_SWIMMER)
     {
-    	printf("IOU moyen = %f\n", iou_moyen/187);
+    	printf("IOU moyen = %f\n", iou_moyen/NB_FRAMES_SWIMMER);
     }
     memcpy(dest, img_src.data, 3*width*height);
 }

@@ -158,13 +158,13 @@ void drawRectangle(int width, int height, unsigned char *src, Rectangle *bb, uns
 void iou(Rectangle *r1, Rectangle* r2, float* iou)
 {
 	(*iou)= iou_cpp(r1, r2);
+	printf("IOU seg = %f \n",(*iou));
 }
 
 float iou_1(Rectangle *r1, Rectangle* r2)
 {
 	return iou_cpp(r1, r2);
 }
-
 
 /*void readJson()
 {
