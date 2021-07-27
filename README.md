@@ -49,7 +49,7 @@ Go to /Code/Algo/HoCL and
 ``cd dot``
 ``dot -Tpng ./swimmerAlgorithm_main.dot > graphAlgo.png``
 
-![ Alt text](Code/data/video_1.gif) / ! [](Code/data/video_1.gif)
+![](Code/data/Video_1.gif) / ! [](Code/data/Video_1.gif)
 
 
 
