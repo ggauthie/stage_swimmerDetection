@@ -49,7 +49,11 @@ Go to /Code/Algo/HoCL and
 ``cd dot``
 ``dot -Tpng ./swimmerAlgorithm_main.dot > graphAlgo.png``
 
-![](Code/data/Video_1.gif) / ! [](Code/data/Video_1.gif)
+Result with the 3 combined algorithm(GMM conditional)
+
+![Video 1](Code/data/Video_1.gif) 
+![Video 2](Code/data/video_2.gif)
+![Video 3](Code/data/video_3.gif)
 
 
 
