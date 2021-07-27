@@ -1,4 +1,4 @@
-# stage_swimmerDetection
+# Swimmer Detection
 Program used to detect a swimmer in a video file mp4.
 
 ## Pre-requisites 
@@ -9,9 +9,7 @@ Program used to detect a swimmer in a video file mp4.
 - ffmpeg
 - graphviz
 
-## Compilation
-
-### Application
+## Application
 
 Open the project in Preesm : https://github.com/preesm/preesm
 Different algorithms are available :
@@ -49,10 +47,14 @@ Go to /Code/Algo/HoCL and
 ``cd dot``
 ``dot -Tpng ./swimmerAlgorithm_main.dot > graphAlgo.png``
 
-Result with the 3 combined algorithm(GMM conditional)
-
+## Result with the 3 combined algorithm(GMM conditional)
+### VIDEO 1
 ![Video 1](Code/data/Video_1.gif) 
+
+### VIDEO 2
 ![Video 2](Code/data/video_2.gif)
+
+### VIDEO 3
 ![Video 3](Code/data/video_3.gif)
 
 
