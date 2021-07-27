@@ -45,9 +45,10 @@ Run `./Swimmer_Detection_c`
 Go to /Code/Algo/HoCL and 
 ``make``
 ``cd dot``
-``dot -Tpng ./swimmerAlgorithm_main.dot > graphAlgo.png``
+``dot -Tpng ./swimmerAlgorithm_main.dot > graphAlgo.png``.
 
-## Result with the 3 combined algorithm(GMM conditional)
+## Result with the 3 combined algorithm(GMM conditional)
+
 ### VIDEO 1
 ![Video 1](Code/data/Video_1.gif) 
 
