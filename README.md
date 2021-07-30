@@ -1,5 +1,5 @@
 # Swimmer Detection
-Program used to detect a swimmer in a video file mp4.
+Program used to detect a swimmer in a mp4 video file .
 
 ## Pre-requisites 
 
@@ -40,12 +40,20 @@ Run `cmake -DSTATIC=OFF .` in /Code.
 Run `make && cd /Release`
 Run `./Swimmer_Detection_c`
 
-### Generation of graph with HoCL
+### Generation of graph dot with HoCL
 
-Go to /Code/Algo/HoCL and 
+Go to Algo/HoCL and 
 ``make``
 ``cd dot``
-``dot -Tpng ./swimmerAlgorithm_main.dot > graphAlgo.png``.
+``dot -Tpng ./<filename>.dot > <filename>.png``.
+
+### Generation of graph .pi for PREESM with HoCL
+
+Go to Algo/HoCL and 
+
+``make SRCS='<name_of_the_hcl_file' preesm`
+
+Then open your .pi files in Preesm.
 
 ## Result with the 3 combined algorithm(GMM conditional)
 
