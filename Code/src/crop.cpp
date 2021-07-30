@@ -2,6 +2,8 @@
 // Created by ggauthie on 02/06/2021.
 //
 
+#include "crop.h"
+
 void crop(unsigned char* src, unsigned char* dest, int height, int width, int x_rect, int y_rect, int width_rect, int height_rect)
 {
     if(src && dest)
@@ -16,6 +18,11 @@ void crop(unsigned char* src, unsigned char* dest, int height, int width, int x_
             }
         }
     }
+}
+
+void crop_y(unsigned char* src, unsigned char* dest, int width,  int height, int y_left)
+{
+	memcpy(dest,src + 3*y_left*width,3*(height-y_left)*width);
 }
 
 void cropWithPadding(unsigned char* src, unsigned char* dest, int height, int width, int x_rect, int y_rect, int width_rect, int height_rect, int padding)

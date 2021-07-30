@@ -50,5 +50,7 @@ void selector(int nb_frames_init, OUT Param *initDone, OUT Param * lineConstruct
 
 void selectGMM(float *iou, OUT Param *activeGMM);
 
+void setY(int* y_left_in, OUT Param *y_left_out);
+
 
 #endif

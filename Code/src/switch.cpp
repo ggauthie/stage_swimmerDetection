@@ -73,3 +73,8 @@ void selectGMM(float *iou, OUT Param *activeGMM)
 	}
 }
 
+void setY(int* y_left_in, OUT Param *y_left_out)
+{
+	(*y_left_out) = (*y_left_in);
+}
+
