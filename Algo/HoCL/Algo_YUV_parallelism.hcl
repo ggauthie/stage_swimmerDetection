@@ -19,7 +19,7 @@ actor
   preesm(loop_fn="cvtColorRGBtoYUV", incl_file="Code/include/ImageWrapper.h", src_file="Code/src/ImageWrapper.cpp")
 end;
 
-node Segmentation YUV
+node SegmentationYUV
   in (width: int param, height: int param, src: uchar[3*height*width])
   out (likelihood: uchar[2*height*width])
 actor
@@ -46,8 +46,8 @@ node Algo_YUV_parallelism
 fun 
   val slice = Split width height nbSlice src
   val dest1 = CvtColorYUV width sliceHeight slice
-  val mask_hsv = SegmentationYUV width height dest1
-  val dest3 = Merge width height nbSlice dest2
+  val mask_yuv = SegmentationYUV width height dest1
+  val dest3 = Merge width height nbSlice mask_yuv 
   val bb = BoxConstruction width height dest3
 end;
 
@@ -84,7 +84,7 @@ fun
   val pixels = ReadFrame width height
 
   -- Path Swimmer Detection
-  val bb =  Algo_HSV_parallelism pixels width height sliceHeight nbSlice component_index
+  val bb =  Algo_YUV_parallelism pixels width height sliceHeight nbSlice component_index
   val dest = DrawRectangle width height bb pixels
   val _ = DisplayFrame width height dest
 end;

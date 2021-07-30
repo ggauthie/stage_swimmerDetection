@@ -19,7 +19,7 @@ actor
   preesm(loop_fn="cvtColorHSV", incl_file="Code/include/ImageWrapper.h", src_file="Code/src/ImageWrapper.cpp")
 end;
 
-node Segmentation HSV
+node SegmentationHSV
   in (width: int param, height: int param, src: uchar[3*height*width])
   out (likelihood: uchar[2*height*width])
 actor
@@ -47,7 +47,7 @@ fun
   val slice = Split width height nbSlice src
   val dest1 = CvtColorHSV width sliceHeight slice
   val mask_hsv = SegmentationHSV width height dest1
-  val dest3 = Merge width height nbSlice dest2
+  val dest3 = Merge width height nbSlice mask_hsv
   val bb = BoxConstruction width height dest3
 end;
 
