@@ -10,6 +10,7 @@
 #include "string.h"
 
 #define NB_FRAMES_SWIMMER 187
+#define PATH_JSON_FILE "//home/guillaume/Téléchargements/preesm-3.21.0-linux.gtk.x86_64/workspace/SwimmerDetection/Code/data/images/Testset/video2/Annotations/Annot" + id +".json"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ static double iou_moyen = 0;
 Rect readJson_cpp(int id_frame, int width, int height)
 {
     string id = id_frame < 10 ? ("00"+ to_string(id_frame)) : id_frame < 100 ? ("0"+ to_string(id_frame)) : to_string(id_frame);
-    string path = "/home/ggauthie/dev/workspace_preesm/SwimmerDetection/Code/data/images/Testset/video2/Annotations/Annot" + id +".json";
+    string path = PATH_JSON_FILE;
     //cout << path << endl;
     ifstream ifs(path);
     if(!ifs)
