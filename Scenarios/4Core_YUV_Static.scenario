@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario>
+    <files>
+        <algorithm url="/SwimmerDetection/Algo/FullAlgo_YUV_parallelism.pi"/>
+        <architecture url="/SwimmerDetection/Archi/4CoreX86.slam"/>
+        <codegenDirectory url="/SwimmerDetection/Code/generated/"/>
+    </files>
+    <constraints excelUrl="">
+        <constraintGroup>
+            <operator name="Core0"/>
+            <task name="test/readFrame"/>
+            <task name="test/boxConstruction"/>
+            <task name="test/frameDisplay"/>
+            <task name="test/Algo_YUV/boxConstruction"/>
+            <task name="test/Algo_YUV/cvtColorYUV"/>
+            <task name="test/Algo_YUV/segmentationYUV"/>
+            <task name="test/Algo_YUV/split"/>
+            <task name="test/Algo_YUV/merge"/>
+            <task name="test/Algo_YUV"/>
+            <task name="test"/>
+        </constraintGroup>
+        <constraintGroup>
+            <operator name="Core1"/>
+            <task name="test/readFrame"/>
+            <task name="test/boxConstruction"/>
+            <task name="test/frameDisplay"/>
+            <task name="test/Algo_YUV/boxConstruction"/>
+            <task name="test/Algo_YUV/cvtColorYUV"/>
+            <task name="test/Algo_YUV/segmentationYUV"/>
+            <task name="test/Algo_YUV/split"/>
+            <task name="test/Algo_YUV/merge"/>
+            <task name="test/Algo_YUV"/>
+            <task name="test"/>
+        </constraintGroup>
+        <constraintGroup>
+            <operator name="Core2"/>
+            <task name="test/readFrame"/>
+            <task name="test/boxConstruction"/>
+            <task name="test/frameDisplay"/>
+            <task name="test/Algo_YUV/boxConstruction"/>
+            <task name="test/Algo_YUV/cvtColorYUV"/>
+            <task name="test/Algo_YUV/segmentationYUV"/>
+            <task name="test/Algo_YUV/split"/>
+            <task name="test/Algo_YUV/merge"/>
+            <task name="test/Algo_YUV"/>
+            <task name="test"/>
+        </constraintGroup>
+        <constraintGroup>
+            <operator name="Core3"/>
+            <task name="test/readFrame"/>
+            <task name="test/boxConstruction"/>
+            <task name="test/frameDisplay"/>
+            <task name="test/Algo_YUV/boxConstruction"/>
+            <task name="test/Algo_YUV/cvtColorYUV"/>
+            <task name="test/Algo_YUV/segmentationYUV"/>
+            <task name="test/Algo_YUV/split"/>
+            <task name="test/Algo_YUV/merge"/>
+            <task name="test/Algo_YUV"/>
+            <task name="test"/>
+        </constraintGroup>
+    </constraints>
+    <timings excelUrl="">
+        <memcpyspeed opname="x86" setuptime="1" timeperunit="0.001"/>
+    </timings>
+    <simuParams>
+        <mainCore>Core0</mainCore>
+        <mainComNode>shared_mem</mainComNode>
+        <averageDataSize>1000</averageDataSize>
+        <dataTypes>
+            <dataType name="unsigned char" size="1"/>
+            <dataType name="float" size="4"/>
+            <dataType name="int" size="4"/>
+            <dataType name="Rectangle" size="16"/>
+        </dataTypes>
+        <specialVertexOperators>
+            <specialVertexOperator path="Core0"/>
+            <specialVertexOperator path="Core1"/>
+            <specialVertexOperator path="Core2"/>
+            <specialVertexOperator path="Core3"/>
+        </specialVertexOperators>
+    </simuParams>
+    <parameterValues/>
+    <papifyConfigs xmlUrl=""/>
+    <energyConfigs xmlUrl="">
+        <performanceObjective objectiveEPS="0.0"/>
+        <peActorsEnergy/>
+    </energyConfigs>
+</scenario>

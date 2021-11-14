@@ -5,7 +5,6 @@
     <key attr.name="arguments" for="node" id="arguments"/>
     <key attr.name="name" attr.type="string" for="graph"/>
     <key attr.name="graph_desc" attr.type="string" for="node"/>
-    <key attr.name="delay" attr.type="string" for="edge"/>
     <graph edgedefault="directed">
         <data key="name">test</data>
         <node expr="640" id="width" kind="param"/>
@@ -87,32 +86,11 @@
             <port annotation="NONE" expr="3*height*width"
                 kind="input" name="pixels"/>
         </node>
-        <node expr="3*height*width" getter=""
-            id="readFrame_pixels__BroadcastFrame_input"
-            kind="delay" level="permanent" setter="">
-            <port annotation="NONE" expr="3*height*width"
-                kind="input" name="set"/>
-            <port annotation="NONE" expr="3*height*width"
-                kind="output" name="get"/>
-        </node>
-        <node expr="3*height*width" getter=""
-            id="boxConstruction_dest__frameDisplay_pixels"
-            kind="delay" level="permanent" setter="">
-            <port annotation="NONE" expr="3*height*width"
-                kind="input" name="set"/>
-            <port annotation="NONE" expr="3*height*width"
-                kind="output" name="get"/>
-        </node>
-        <edge expr="3*height*width" kind="fifo"
-            source="boxConstruction" sourceport="dest"
-            target="frameDisplay" targetport="pixels" type="unsigned char">
-            <data key="delay">boxConstruction_dest__frameDisplay_pixels</data>
-        </edge>
-        <edge expr="3*height*width" kind="fifo"
-            source="readFrame" sourceport="pixels"
-            target="BroadcastFrame" targetport="input" type="unsigned char">
-            <data key="delay">readFrame_pixels__BroadcastFrame_input</data>
-        </edge>
+        <edge kind="fifo" source="boxConstruction"
+            sourceport="dest" target="frameDisplay"
+            targetport="pixels" type="unsigned char"/>
+        <edge kind="fifo" source="readFrame" sourceport="pixels"
+            target="BroadcastFrame" targetport="input" type="unsigned char"/>
         <edge kind="fifo" source="BroadcastFrame"
             sourceport="o_1" target="Algo_HSV" targetport="src" type="unsigned char"/>
         <edge kind="fifo" source="Algo_HSV" sourceport="bb"
@@ -139,9 +117,5 @@
             target="frameDisplay" targetport="width"/>
         <edge kind="dependency" source="nbSlice"
             target="Algo_HSV" targetport="nbSlice"/>
-        <edge kind="dependency" source="width" target="readFrame_pixels__BroadcastFrame_input"/>
-        <edge kind="dependency" source="height" target="readFrame_pixels__BroadcastFrame_input"/>
-        <edge kind="dependency" source="width" target="boxConstruction_dest__frameDisplay_pixels"/>
-        <edge kind="dependency" source="height" target="boxConstruction_dest__frameDisplay_pixels"/>
     </graph>
 </graphml>
